@@ -50,7 +50,7 @@ const Password = () => {
         <title>Passport System</title>
       </head>
 
-      <body className="bg-background">
+      <body className="bg-background flex flex-col min-h-screen w">
         <div>
           <img
             src="../images/Passport.png"

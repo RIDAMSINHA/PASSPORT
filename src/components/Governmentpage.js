@@ -37,7 +37,7 @@ const GovernmentPortal = () => {
         />
         <title>Passport System</title>
       </head>
-      <body className="bg-background">
+      <body className="bg-background flex flex-col min-h-screen w">
         <div>
           <img src="../images/Passport.png" alt="LOGO" className="h-14 mt-5 mx-8" />
         </div>
