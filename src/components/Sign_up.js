@@ -37,7 +37,7 @@ const Sign_up = () => {
         <title>Passport System</title>
       </head>
 
-      <body className="bg-background">
+      <body className="bg-background flex flex-col min-h-screen w">
         <div className="flex mt-32 ml-48 space-x-40">
           <div>
             <h1 className="font-kons text-8xl">SIGN UP</h1>
