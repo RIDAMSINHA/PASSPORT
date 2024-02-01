@@ -1,6 +1,6 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import PassportLogin from "./components/Frontpage";
-import ErrorPage from './components/ErrorPage';
+import ErrorPage from './components/utilites/ErrorPage';
 import PassportSystem from './components/ApproveRequest';
 import GovernmentPortal from './components/Governmentpage';
 import Login from './components/User_Login';
