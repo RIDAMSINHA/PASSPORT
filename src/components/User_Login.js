@@ -3,36 +3,24 @@ import "../styles/style.css"; // Import your CSS file
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import { ethers } from "ethers";
+import { useLocation } from "react-router-dom";
 
 const Login = () => {
   const navigate = useNavigate();
   const [errorMessage, setErrorMessage] = useState(null);
+  const location = useLocation();
+  const GOV_CONTRACT_ADDRESS = new URLSearchParams(location.search).get("contractAddress");
+
+  console.log(GOV_CONTRACT_ADDRESS);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
   
-    const _pcd = event.target.username.value;
+    const _pcd = event.target.address.value;
     const _password = event.target.password.value;
-    const GOV_CONTRACT_ADDRESS = "0xf0A5281b6810172467c84248BAafFF01c7F189B4";
+    const _username = event.target.username.value;
+
     const GOV_CONTRACT_ABI = [
-      {
-        "inputs": [
-          {
-            "internalType": "string",
-            "name": "_password",
-            "type": "string"
-          },
-          {
-            "internalType": "string",
-            "name": "_uuid",
-            "type": "string"
-          }
-        ],
-        "name": "resetPassword",
-        "outputs": [],
-        "stateMutability": "nonpayable",
-        "type": "function"
-      },
       {
         "inputs": [
           {
@@ -59,6 +47,11 @@ const Login = () => {
             "internalType": "string",
             "name": "_uuid",
             "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "_username",
+            "type": "string"
           }
         ],
         "stateMutability": "nonpayable",
@@ -67,19 +60,6 @@ const Login = () => {
       {
         "inputs": [],
         "name": "description",
-        "outputs": [
-          {
-            "internalType": "string",
-            "name": "",
-            "type": "string"
-          }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-      },
-      {
-        "inputs": [],
-        "name": "email",
         "outputs": [
           {
             "internalType": "string",
@@ -157,6 +137,11 @@ const Login = () => {
             "internalType": "string",
             "name": "_pcd",
             "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "_username",
+            "type": "string"
           }
         ],
         "name": "login",
@@ -184,6 +169,24 @@ const Login = () => {
         "type": "function"
       },
       {
+        "inputs": [
+          {
+            "internalType": "string",
+            "name": "_password",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "_uuid",
+            "type": "string"
+          }
+        ],
+        "name": "resetPassword",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+      },
+      {
         "inputs": [],
         "name": "rname",
         "outputs": [
@@ -208,14 +211,28 @@ const Login = () => {
         ],
         "stateMutability": "view",
         "type": "function"
+      },
+      {
+        "inputs": [],
+        "name": "username",
+        "outputs": [
+          {
+            "internalType": "string",
+            "name": "",
+            "type": "string"
+          }
+        ],
+        "stateMutability": "view",
+        "type": "function"
       }
     ]
+
     // Initialize ethers by connecting to the network
     const provider = new ethers.JsonRpcProvider(
       "https://eth-sepolia-public.unifra.io"
     );
     const privateKey =
-      "2d30cb4d937e240141bb54d14a5621e802b4e9b89a618b53a5b9f59a18c1fddd";
+      "0x2d30cb4d937e240141bb54d14a5621e802b4e9b89a618b53a5b9f59a18c1fddd";
     const wallet = new ethers.Wallet(privateKey);
     const signer = wallet.connect(provider);
   
@@ -226,9 +243,10 @@ const Login = () => {
     );
   
       try {
-        console.log("Attempting to log in with password:", _password, "and pcd:", _pcd);
+        console.log("Attempting to log in with password:", _password, "username:", _username, "and pcd:", _pcd);
     
-        const loginSuccessful = await govContract.login(_password, _pcd);
+        const loginSuccessful = await govContract.login(_password, _pcd, _username);
+        console.log('Login result:', loginSuccessful);
     
         if (loginSuccessful) {
             // If the login was successful, redirect the user to the next page
@@ -241,7 +259,7 @@ const Login = () => {
         }
     } catch (error) {
         console.error("Error calling login function:", error);
-        setErrorMessage("Transaction failed. Please try again.");
+        setErrorMessage("Invalid credentials. Please try again.");
     }
     
   };
@@ -290,20 +308,20 @@ const Login = () => {
               onSubmit={handleSubmit}
               className="font-kelly ml-10 mt-10 space-y-2"
             >
-              {/* Email */}
-              {/* <label htmlFor="email" className="text-3xl">
-                Email
+              {/*Email */}
+              <label htmlFor="email" className="text-3xl">
+                Address
               </label>{' '}
               <br />
               <input
-              name='email'
-                type="email"
-                placeholder="Email"
+              name='address'
+                type="text"
+                placeholder="Address"
                 required
                 className="font-normal h-10 w-96 px-5 focus:border-blue-here focus:border-4 hover:border-blue-here hover:border-4"
               />{' '}
               <br />
-              <br /> */}
+              <br />
               {/* User Name */}
               <label htmlFor="username" className="text-3xl mt-8">
                 Username

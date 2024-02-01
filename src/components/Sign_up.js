@@ -1,251 +1,178 @@
-import React from 'react';
-import '../styles/style.css';
+import React, { useRef, useState, useEffect } from "react";
 import { ethers } from 'ethers';
+import emailjs from "@emailjs/browser";
+import { useNavigate } from 'react-router-dom';
+import { JsonRpcProvider } from 'ethers/providers';
 
-const handleSubmit = async (event) => {
-  event.preventDefault();
+const GOV_CONTRACT_ABI = [
+	{
+		"inputs": [
+			{
+				"internalType": "string",
+				"name": "_rname",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "_pcd",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "_password",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "_uuid",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "_username",
+				"type": "string"
+			}
+		],
+		"name": "deploySubContract",
+		"outputs": [
+			{
+				"internalType": "address",
+				"name": "",
+				"type": "address"
+			}
+		],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"stateMutability": "nonpayable",
+		"type": "constructor"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": true,
+				"internalType": "address",
+				"name": "contractAddress",
+				"type": "address"
+			},
+			{
+				"indexed": true,
+				"internalType": "string",
+				"name": "uuid",
+				"type": "string"
+			}
+		],
+		"name": "SubContractDeployed",
+		"type": "event"
+	},
+	{
+		"inputs": [],
+		"name": "owner",
+		"outputs": [
+			{
+				"internalType": "address",
+				"name": "",
+				"type": "address"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	}
+];
 
-  const _token = event.target.aadhar.value;
-  const _rname = event.target.fullname.value;
-  const _pcd = event.target.address.value;
-  const _password = event.target.password.value;
-  const _uuid = event.target.email.value;
+const generateRandomUsername = () => {
+  const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  const usernameLength = 8;
+  let randomUsername = '';
 
-
-  const govContractAddress = '0xCaA4C7A54D8506F33EDe1FFEc985D2FAA8cba26e';
-  const GOV_CONTRACT_BYTECODE = '608060405234801562000010575f80fd5b50604051620019ee380380620019ee8339818101604052810190620000369190620002c1565b845f806101000a81548173ffffffffffffffffffffffffffffffffffffffff021916908373ffffffffffffffffffffffffffffffffffffffff1602179055508360019081620000869190620005f8565b508260059081620000989190620005f8565b508160069081620000aa9190620005f8565b508060079081620000bc9190620005f8565b505050505050620006dc565b5f604051905090565b5f80fd5b5f80fd5b5f73ffffffffffffffffffffffffffffffffffffffff82169050919050565b5f6200010482620000d9565b9050919050565b5f6200011782620000f8565b9050919050565b62000129816200010b565b811462000134575f80fd5b50565b5f8151905062000147816200011e565b92915050565b5f80fd5b5f80fd5b5f601f19601f8301169050919050565b7f4e487b71000000000000000000000000000000000000000000000000000000005f52604160045260245ffd5b6200019d8262000155565b810181811067ffffffffffffffff82111715620001bf57620001be62000165565b5b80604052505050565b5f620001d3620000c8565b9050620001e1828262000192565b919050565b5f67ffffffffffffffff82111562000203576200020262000165565b5b6200020e8262000155565b9050602081019050919050565b5f5b838110156200023a5780820151818401526020810190506200021d565b5f8484015250505050565b5f6200025b6200025584620001e6565b620001c8565b9050828152602081018484840111156200027a576200027962000151565b5b620002878482856200021b565b509392505050565b5f82601f830112620002a657620002a56200014d565b5b8151620002b884826020860162000245565b91505092915050565b5f805f805f60a08688031215620002dd57620002dc620000d1565b5b5f620002ec8882890162000137565b955050602086015167ffffffffffffffff81111562000310576200030f620000d5565b5b6200031e888289016200028f565b945050604086015167ffffffffffffffff811115620003425762000341620000d5565b5b62000350888289016200028f565b935050606086015167ffffffffffffffff811115620003745762000373620000d5565b5b62000382888289016200028f565b925050608086015167ffffffffffffffff811115620003a657620003a5620000d5565b5b620003b4888289016200028f565b9150509295509295909350565b5f81519050919050565b7f4e487b71000000000000000000000000000000000000000000000000000000005f52602260045260245ffd5b5f60028204905060018216806200041057607f821691505b602082108103620004265762000425620003cb565b5b50919050565b5f819050815f5260205f209050919050565b5f6020601f8301049050919050565b5f82821b905092915050565b5f600883026200048a7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff826200044d565b6200049686836200044d565b95508019841693508086168417925050509392505050565b5f819050919050565b5f819050919050565b5f620004e0620004da620004d484620004ae565b620004b7565b620004ae565b9050919050565b5f819050919050565b620004fb83620004c0565b620005136200050a82620004e7565b84845462000459565b825550505050565b5f90565b620005296200051b565b62000536818484620004f0565b505050565b5b818110156200055d57620005515f826200051f565b6001810190506200053c565b5050565b601f821115620005ac5762000576816200042c565b62000581846200043e565b8101602085101562000591578190505b620005a9620005a0856200043e565b8301826200053b565b50505b505050565b5f82821c905092915050565b5f620005ce5f1984600802620005b1565b1980831691505092915050565b5f620005e88383620005bd565b9150826002028217905092915050565b6200060382620003c1565b67ffffffffffffffff8111156200061f576200061e62000165565b5b6200062b8254620003f8565b6200063882828562000561565b5f60209050601f8311600181146200066e575f841562000659578287015190505b620006658582620005db565b865550620006d4565b601f1984166200067e866200042c565b5f5b82811015620006a75784890151825560018201915060208501945060208101905062000680565b86831015620006c75784890151620006c3601f891682620005bd565b8355505b6001600288020188555050505b505050505050565b61130480620006ea5f395ff3fe608060405234801561000f575f80fd5b506004361061009c575f3560e01c8063820e93f511610064578063820e93f51461015957806385cefa3b14610177578063a146c6a314610195578063acf2cbb2146101b3578063fc0c546a146101e35761009c565b8063516f279e146100a057806358467dbc146100be578063610d59af146100ee578063679a9c2c1461011f5780637284e4161461013b575b5f80fd5b6100a8610201565b6040516100b591906107c6565b60405180910390f35b6100d860048036038101906100d39190610923565b61028d565b6040516100e591906109b3565b60405180910390f35b61010860048036038101906101039190610a37565b610348565b604051610116929190610b65565b60405180910390f35b61013960048036038101906101349190610923565b6103c4565b005b610143610469565b60405161015091906107c6565b60405180910390f35b6101616104f5565b60405161016e91906107c6565b60405180910390f35b61017f610581565b60405161018c91906107c6565b60405180910390f35b61019d61060d565b6040516101aa91906107c6565b60405180910390f35b6101cd60048036038101906101c89190610bd5565b610699565b6040516101da91906109b3565b60405180910390f35b6101eb610719565b6040516101f89190610c5b565b60405180910390f35b6003805461020e90610ca1565b80601f016020809104026020016040519081016040528092919081815260200182805461023a90610ca1565b80156102855780601f1061025c57610100808354040283529160200191610285565b820191905f5260205f20905b81548152906001019060200180831161026857829003601f168201915b505050505081565b5f8060066040516020016102a19190610d6d565b60405160208183030381529060405280519060200120846040516020016102c89190610db3565b604051602081830303815290604052805190602001201490505f60056040516020016102f49190610d6d565b604051602081830303815290604052805190602001208460405160200161031b9190610db3565b6040516020818303038152906040528051906020012014905081801561033e5750805b9250505092915050565b6060808273ffffffffffffffffffffffffffffffffffffffff1663af52017b6040518163ffffffff1660e01b81526004015f60405180830381865afa158015610393573d5f803e3d5ffd5b505050506040513d5f823e3d601f19601f820116820180604052508101906103bb9190610f19565b91509150915091565b8060076040516020016103d79190610d6d565b60405160208183030381529060405280519060200120816040516020016103fe9190610db3565b6040516020818303038152906040528051906020012014610454576040517f08c379a000000000000000000000000000000000000000000000000000000000815260040161044b90610fd9565b60405180910390fd5b82600690816104639190611182565b50505050565b6004805461047690610ca1565b80601f01602080910402602001604051908101604052809291908181526020018280546104a290610ca1565b80156104ed5780601f106104c4576101008083540402835291602001916104ed565b820191905f5260205f20905b8154815290600101906020018083116104d057829003601f168201915b505050505081565b6002805461050290610ca1565b80601f016020809104026020016040519081016040528092919081815260200182805461052e90610ca1565b80156105795780601f1061055057610100808354040283529160200191610579565b820191905f5260205f20905b81548152906001019060200180831161055c57829003601f168201915b505050505081565b6005805461058e90610ca1565b80601f01602080910402602001604051908101604052809291908181526020018280546105ba90610ca1565b80156106055780601f106105dc57610100808354040283529160200191610605565b820191905f5260205f20905b8154815290600101906020018083116105e857829003601f168201915b505050505081565b6001805461061a90610ca1565b80601f016020809104026020016040519081016040528092919081815260200182805461064690610ca1565b80156106915780601f1061066857610100808354040283529160200191610691565b820191905f5260205f20905b81548152906001019060200180831161067457829003601f168201915b505050505081565b5f8173ffffffffffffffffffffffffffffffffffffffff1663249231b0306040518263ffffffff1660e01b81526004016106d39190611260565b602060405180830381865afa1580156106ee573d5f803e3d5ffd5b505050506040513d601f19601f8201168201806040525081019061071291906112a3565b9050919050565b5f8054906101000a900473ffffffffffffffffffffffffffffffffffffffff1681565b5f81519050919050565b5f82825260208201905092915050565b5f5b83811015610773578082015181840152602081019050610758565b5f8484015250505050565b5f601f19601f8301169050919050565b5f6107988261073c565b6107a28185610746565b93506107b2818560208601610756565b6107bb8161077e565b840191505092915050565b5f6020820190508181035f8301526107de818461078e565b905092915050565b5f604051905090565b5f80fd5b5f80fd5b5f80fd5b5f80fd5b7f4e487b71000000000000000000000000000000000000000000000000000000005f52604160045260245ffd5b6108358261077e565b810181811067ffffffffffffffff82111715610854576108536107ff565b5b80604052505050565b5f6108666107e6565b9050610872828261082c565b919050565b5f67ffffffffffffffff821115610891576108906107ff565b5b61089a8261077e565b9050602081019050919050565b828183375f83830152505050565b5f6108c76108c284610877565b61085d565b9050828152602081018484840111156108e3576108e26107fb565b5b6108ee8482856108a7565b509392505050565b5f82601f83011261090a576109096107f7565b5b813561091a8482602086016108b5565b91505092915050565b5f8060408385031215610939576109386107ef565b5b5f83013567ffffffffffffffff811115610956576109556107f3565b5b610962858286016108f6565b925050602083013567ffffffffffffffff811115610983576109826107f3565b5b61098f858286016108f6565b9150509250929050565b5f8115159050919050565b6109ad81610999565b82525050565b5f6020820190506109c65f8301846109a4565b92915050565b5f73ffffffffffffffffffffffffffffffffffffffff82169050919050565b5f6109f5826109cc565b9050919050565b5f610a06826109eb565b9050919050565b610a16816109fc565b8114610a20575f80fd5b50565b5f81359050610a3181610a0d565b92915050565b5f60208284031215610a4c57610a4b6107ef565b5b5f610a5984828501610a23565b91505092915050565b5f81519050919050565b5f82825260208201905092915050565b5f819050602082019050919050565b5f82825260208201905092915050565b5f610aa58261073c565b610aaf8185610a8b565b9350610abf818560208601610756565b610ac88161077e565b840191505092915050565b5f610ade8383610a9b565b905092915050565b5f602082019050919050565b5f610afc82610a62565b610b068185610a6c565b935083602082028501610b1885610a7c565b805f5b85811015610b535784840389528151610b348582610ad3565b9450610b3f83610ae6565b925060208a01995050600181019050610b1b565b50829750879550505050505092915050565b5f6040820190508181035f830152610b7d8185610af2565b90508181036020830152610b918184610af2565b90509392505050565b5f610ba4826109eb565b9050919050565b610bb481610b9a565b8114610bbe575f80fd5b50565b5f81359050610bcf81610bab565b92915050565b5f60208284031215610bea57610be96107ef565b5b5f610bf784828501610bc1565b91505092915050565b5f819050919050565b5f610c23610c1e610c19846109cc565b610c00565b6109cc565b9050919050565b5f610c3482610c09565b9050919050565b5f610c4582610c2a565b9050919050565b610c5581610c3b565b82525050565b5f602082019050610c6e5f830184610c4c565b92915050565b7f4e487b71000000000000000000000000000000000000000000000000000000005f52602260045260245ffd5b5f6002820490506001821680610cb857607f821691505b602082108103610ccb57610cca610c74565b5b50919050565b5f81905092915050565b5f819050815f5260205f209050919050565b5f8154610cf981610ca1565b610d038186610cd1565b9450600182165f8114610d1d5760018114610d3257610d64565b60ff1983168652811515820286019350610d64565b610d3b85610cdb565b5f5b83811015610d5c57815481890152600182019150602081019050610d3d565b838801955050505b50505092915050565b5f610d788284610ced565b915081905092915050565b5f610d8d8261073c565b610d978185610cd1565b9350610da7818560208601610756565b80840191505092915050565b5f610dbe8284610d83565b915081905092915050565b5f67ffffffffffffffff821115610de357610de26107ff565b5b602082029050602081019050919050565b5f80fd5b5f610e0a610e0584610877565b61085d565b905082815260208101848484011115610e2657610e256107fb565b5b610e31848285610756565b509392505050565b5f82601f830112610e4d57610e4c6107f7565b5b8151610e5d848260208601610df8565b91505092915050565b5f610e78610e7384610dc9565b61085d565b90508083825260208201905060208402830185811115610e9b57610e9a610df4565b5b835b81811015610ee257805167ffffffffffffffff811115610ec057610ebf6107f7565b5b808601610ecd8982610e39565b85526020850194505050602081019050610e9d565b5050509392505050565b5f82601f830112610f0057610eff6107f7565b5b8151610f10848260208601610e66565b91505092915050565b5f8060408385031215610f2f57610f2e6107ef565b5b5f83015167ffffffffffffffff811115610f4c57610f4b6107f3565b5b610f5885828601610eec565b925050602083015167ffffffffffffffff811115610f7957610f786107f3565b5b610f8585828601610eec565b9150509250929050565b7f57726f6e672055554944000000000000000000000000000000000000000000005f82015250565b5f610fc3600a83610746565b9150610fce82610f8f565b602082019050919050565b5f6020820190508181035f830152610ff081610fb7565b9050919050565b5f6020601f8301049050919050565b5f82821b905092915050565b5f600883026110417fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff82611006565b61104b8683611006565b95508019841693508086168417925050509392505050565b5f819050919050565b5f61108661108161107c84611063565b610c00565b611063565b9050919050565b5f819050919050565b61109f8361106c565b6110b36110ab8261108d565b848454611012565b825550505050565b5f90565b6110c76110bb565b6110d2818484611096565b505050565b5b818110156110f5576110ea5f826110bf565b6001810190506110d8565b5050565b601f82111561113a5761110b81610cdb565b61111484610ff7565b81016020851015611123578190505b61113761112f85610ff7565b8301826110d7565b50505b505050565b5f82821c905092915050565b5f61115a5f198460080261113f565b1980831691505092915050565b5f611172838361114b565b9150826002028217905092915050565b61118b8261073c565b67ffffffffffffffff8111156111a4576111a36107ff565b5b6111ae8254610ca1565b6111b98282856110f9565b5f60209050601f8311600181146111ea575f84156111d8578287015190505b6111e28582611167565b865550611249565b601f1984166111f886610cdb565b5f5b8281101561121f578489015182556001820191506020850194506020810190506111fa565b8683101561123c5784890151611238601f89168261114b565b8355505b6001600288020188555050505b505050505050565b61125a816109eb565b82525050565b5f6020820190506112735f830184611251565b92915050565b61128281610999565b811461128c575f80fd5b50565b5f8151905061129d81611279565b92915050565b5f602082840312156112b8576112b76107ef565b5b5f6112c58482850161128f565b9150509291505056fea2646970667358221220ff580b5139054bbf3ce9ed190924f0acae117af332c630f983a5c34a245e64a464736f6c63430008180033';
-  const GOV_CONTRACT_ABI = [
-    {
-      "inputs": [
-        {
-          "internalType": "string",
-          "name": "_password",
-          "type": "string"
-        },
-        {
-          "internalType": "string",
-          "name": "_uuid",
-          "type": "string"
-        }
-      ],
-      "name": "resetPassword",
-      "outputs": [],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "contract gov",
-          "name": "_token",
-          "type": "address"
-        },
-        {
-          "internalType": "string",
-          "name": "_rname",
-          "type": "string"
-        },
-        {
-          "internalType": "string",
-          "name": "_pcd",
-          "type": "string"
-        },
-        {
-          "internalType": "string",
-          "name": "_password",
-          "type": "string"
-        },
-        {
-          "internalType": "string",
-          "name": "_uuid",
-          "type": "string"
-        }
-      ],
-      "stateMutability": "nonpayable",
-      "type": "constructor"
-    },
-    {
-      "inputs": [],
-      "name": "description",
-      "outputs": [
-        {
-          "internalType": "string",
-          "name": "",
-          "type": "string"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [],
-      "name": "email",
-      "outputs": [
-        {
-          "internalType": "string",
-          "name": "",
-          "type": "string"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "contract BorderAuthority",
-          "name": "borderAuthorityContract",
-          "type": "address"
-        }
-      ],
-      "name": "getTravelHistory",
-      "outputs": [
-        {
-          "internalType": "string[]",
-          "name": "",
-          "type": "string[]"
-        },
-        {
-          "internalType": "string[]",
-          "name": "",
-          "type": "string[]"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "contract Visa",
-          "name": "visaContract",
-          "type": "address"
-        }
-      ],
-      "name": "getVisaStatus",
-      "outputs": [
-        {
-          "internalType": "bool",
-          "name": "",
-          "type": "bool"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [],
-      "name": "location",
-      "outputs": [
-        {
-          "internalType": "string",
-          "name": "",
-          "type": "string"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "string",
-          "name": "_password",
-          "type": "string"
-        },
-        {
-          "internalType": "string",
-          "name": "_pcd",
-          "type": "string"
-        }
-      ],
-      "name": "login",
-      "outputs": [
-        {
-          "internalType": "bool",
-          "name": "",
-          "type": "bool"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [],
-      "name": "pcd",
-      "outputs": [
-        {
-          "internalType": "string",
-          "name": "",
-          "type": "string"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [],
-      "name": "rname",
-      "outputs": [
-        {
-          "internalType": "string",
-          "name": "",
-          "type": "string"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [],
-      "name": "token",
-      "outputs": [
-        {
-          "internalType": "contract gov",
-          "name": "",
-          "type": "address"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    }
-  ]
-
-  // Initialize ethers by connecting to the network
-  const provider = new ethers.JsonRpcProvider('https://eth-sepolia-public.unifra.io');
-  const privateKey = '2d30cb4d937e240141bb54d14a5621e802b4e9b89a618b53a5b9f59a18c1fddd';
-  const wallet = new ethers.Wallet(privateKey);
-  const signer = wallet.connect(provider);
-
-  console.log('Form values:' ,_token, _rname, _pcd, _password, _uuid);
-  const subContractFactory = new ethers.ContractFactory( GOV_CONTRACT_ABI, GOV_CONTRACT_BYTECODE, signer);
-
-  try {
-    const deployTransaction = await subContractFactory.getDeployTransaction(
-      _token,
-      _rname,
-      _pcd,
-      _password,
-      _uuid,
-      { gasLimit: 3000000 }
-    );
-  
-    const tx = await signer.sendTransaction(deployTransaction);
-    const receipt = await tx.wait();
-    if (receipt.status === 1) {
-      console.log('Receipt:', receipt);
-      // console.log('Contract deployed at:', receipt.events.ContractDeployed.returnValues.contractAddress);
-    } else {
-      console.error('Transaction failed:', receipt);
-    }
-    
-    // console.log('Contract deployed at:', receipt.events.ContractDeployed.returnValues.contractAddress);
-  } catch (error) {
-    console.error('Error deploying contract:', error.message);
+  for (let i = 0; i < usernameLength; i++) {
+    const randomIndex = Math.floor(Math.random() * characters.length);
+    randomUsername += characters.charAt(randomIndex);
   }
+
+  return randomUsername;
 };
 
 const Sign_up = () => {
+  const form = useRef();
+  const _username = generateRandomUsername();
+  const history = useNavigate();
+
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+
+    try {
+      console.log('Initializing Ether.js...');
+
+      // Use your private key here. Replace 'YOUR_PRIVATE_KEY' with your actual private key.
+      const privateKey = '0x2d30cb4d937e240141bb54d14a5621e802b4e9b89a618b53a5b9f59a18c1fddd';
+      const wallet = new ethers.Wallet(privateKey);
+
+      // Assume contractAddress is the address of the already deployed contract on the testnet
+      const contractAddress = '0x4477155916D26C8b15E8FD335D0Ed074bBD8150D';
+
+      // Set the provider for the wallet
+      const provider = new ethers.JsonRpcProvider('https://eth-sepolia-public.unifra.io');
+      const connectedWallet = wallet.connect(provider);
+      
+      const deployedContract = new ethers.Contract(contractAddress, GOV_CONTRACT_ABI, connectedWallet);
+
+      console.log('Ether.js initialized successfully');
+
+      // Access form ref directly
+      emailjs
+        .sendForm(
+          "service_innq1uf",
+          "template_s6bqlrp",
+          form.current,
+          "bDImEd5GCR6oT0hzq"
+        )
+        .then(
+            async (result) => {
+              console.log(result.text);
+              console.log("Message has been sent");
+              console.log("YOUR USERNAME IS: ", _username);
+  
+              const _token = event.target.aadhar.value;
+              const _rname = event.target.fullname.value;
+              const _pcd = event.target.address.value;
+              const _password = event.target.password.value;
+              const _uuid = event.target.email.value;
+  
+              console.log('Form values:', _token, _rname, _pcd, _password, _uuid, _username);
+  
+              try {
+                // Call deploySubContract function on the existing deployed contract
+                const deploySubContractResult = await deployedContract.deploySubContract(
+                  _rname, _pcd, _password, _uuid, _username
+                );
+  
+                // Wait for the transaction to be mined
+                const receipt = await deploySubContractResult.wait();
+
+                console.log('Contract deployed at:', deploySubContractResult.to);
+  
+                console.log('Subcontract deployed successfully',receipt);
+                history(`/user_login?contractAddress=${receipt.logs[0].args.contractAddress}`);
+              } catch (error) {
+                console.error('Error calling deploySubContract function:', error.message);
+                console.log(error);
+              }
+            },
+            (error) => {
+              console.log(error.text);
+            }
+          );
+      } catch (error) {
+        console.error('Error using private key:', error.message);
+        console.log(error);
+      }
+    };
+  
+
   return (
     <html lang="en">
       <head>
@@ -289,7 +216,7 @@ const Sign_up = () => {
           </div>
 
           <div className="bg-pink-here max-w-7xl pl-10 pr-20 rounded-3xl border-4 border-blue-here">
-            <form onSubmit={handleSubmit} className="font-kelly ml-10 mt-5 space-y-2">
+            <form ref={form} onSubmit={handleSubmit} className="font-kelly ml-10 mt-5 space-y-2">
               {/* Full Name */}
               <label htmlFor="fullname" className="text-3xl mt-8">
                 Full Name
@@ -361,6 +288,14 @@ const Sign_up = () => {
                 placeholder="Password"
                 required
                 className="h-10 w-96 px-5 focus:border-blue-here focus:border-4 hover:border-blue-here hover:border-4"
+              />
+              <input
+                type="text"
+                name = "username"
+                placeholder="text"
+                required
+                className="absolute hidden h-10 w-96 focus:border-blue-here focus:border-4 hover:border-blue-here hover:border-4"
+                defaultValue={_username}
               />
               <br />
 
