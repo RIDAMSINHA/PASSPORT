@@ -251,7 +251,7 @@ const Login = () => {
         if (loginSuccessful) {
             // If the login was successful, redirect the user to the next page
             console.log("Login successful!");
-            navigate("/gov_portal");
+            navigate("/user");
         } else {
             // If the login was not successful, show an error message
             console.error("Invalid credentials. Login failed.");

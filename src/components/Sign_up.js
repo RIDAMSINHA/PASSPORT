@@ -1,8 +1,7 @@
-import React, { useRef, useState, useEffect } from "react";
+import React, { useRef } from "react";
 import { ethers } from 'ethers';
 import emailjs from "@emailjs/browser";
 import { useNavigate } from 'react-router-dom';
-import { JsonRpcProvider } from 'ethers/providers';
 
 const GOV_CONTRACT_ABI = [
 	{
