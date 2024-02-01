@@ -155,7 +155,8 @@ const Sign_up = () => {
                 console.log('Contract deployed at:', deploySubContractResult.to);
   
                 console.log('Subcontract deployed successfully',receipt);
-                history(`/user_login?contractAddress=${receipt.logs[0].args.contractAddress}`);
+                localStorage.setItem('contractAddress', receipt.logs[0].args.contractAddress);
+                history(`/user_login`);
               } catch (error) {
                 console.error('Error calling deploySubContract function:', error.message);
                 console.log(error);

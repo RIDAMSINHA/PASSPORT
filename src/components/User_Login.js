@@ -9,7 +9,7 @@ const Login = () => {
   const navigate = useNavigate();
   const [errorMessage, setErrorMessage] = useState(null);
   const location = useLocation();
-  const GOV_CONTRACT_ADDRESS = new URLSearchParams(location.search).get("contractAddress");
+  const GOV_CONTRACT_ADDRESS = localStorage.getItem('contractAddress');
 
   console.log(GOV_CONTRACT_ADDRESS);
 
