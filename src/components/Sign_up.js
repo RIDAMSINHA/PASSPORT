@@ -1,7 +1,178 @@
-import React from 'react';
-import '../styles/style.css';
+import React, { useRef, useState, useEffect } from "react";
+import { ethers } from 'ethers';
+import emailjs from "@emailjs/browser";
+import { useNavigate } from 'react-router-dom';
+import { JsonRpcProvider } from 'ethers/providers';
+
+const GOV_CONTRACT_ABI = [
+	{
+		"inputs": [
+			{
+				"internalType": "string",
+				"name": "_rname",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "_pcd",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "_password",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "_uuid",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "_username",
+				"type": "string"
+			}
+		],
+		"name": "deploySubContract",
+		"outputs": [
+			{
+				"internalType": "address",
+				"name": "",
+				"type": "address"
+			}
+		],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"stateMutability": "nonpayable",
+		"type": "constructor"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": true,
+				"internalType": "address",
+				"name": "contractAddress",
+				"type": "address"
+			},
+			{
+				"indexed": true,
+				"internalType": "string",
+				"name": "uuid",
+				"type": "string"
+			}
+		],
+		"name": "SubContractDeployed",
+		"type": "event"
+	},
+	{
+		"inputs": [],
+		"name": "owner",
+		"outputs": [
+			{
+				"internalType": "address",
+				"name": "",
+				"type": "address"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	}
+];
+
+const generateRandomUsername = () => {
+  const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  const usernameLength = 8;
+  let randomUsername = '';
+
+  for (let i = 0; i < usernameLength; i++) {
+    const randomIndex = Math.floor(Math.random() * characters.length);
+    randomUsername += characters.charAt(randomIndex);
+  }
+
+  return randomUsername;
+};
 
 const Sign_up = () => {
+  const form = useRef();
+  const _username = generateRandomUsername();
+  const history = useNavigate();
+
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+
+    try {
+      console.log('Initializing Ether.js...');
+
+      // Use your private key here. Replace 'YOUR_PRIVATE_KEY' with your actual private key.
+      const privateKey = '0x2d30cb4d937e240141bb54d14a5621e802b4e9b89a618b53a5b9f59a18c1fddd';
+      const wallet = new ethers.Wallet(privateKey);
+
+      // Assume contractAddress is the address of the already deployed contract on the testnet
+      const contractAddress = '0x4477155916D26C8b15E8FD335D0Ed074bBD8150D';
+
+      // Set the provider for the wallet
+      const provider = new ethers.JsonRpcProvider('https://eth-sepolia-public.unifra.io');
+      const connectedWallet = wallet.connect(provider);
+      
+      const deployedContract = new ethers.Contract(contractAddress, GOV_CONTRACT_ABI, connectedWallet);
+
+      console.log('Ether.js initialized successfully');
+
+      // Access form ref directly
+      emailjs
+        .sendForm(
+          "service_innq1uf",
+          "template_s6bqlrp",
+          form.current,
+          "bDImEd5GCR6oT0hzq"
+        )
+        .then(
+            async (result) => {
+              console.log(result.text);
+              console.log("Message has been sent");
+              console.log("YOUR USERNAME IS: ", _username);
+  
+              const _token = event.target.aadhar.value;
+              const _rname = event.target.fullname.value;
+              const _pcd = event.target.address.value;
+              const _password = event.target.password.value;
+              const _uuid = event.target.email.value;
+  
+              console.log('Form values:', _token, _rname, _pcd, _password, _uuid, _username);
+  
+              try {
+                // Call deploySubContract function on the existing deployed contract
+                const deploySubContractResult = await deployedContract.deploySubContract(
+                  _rname, _pcd, _password, _uuid, _username
+                );
+  
+                // Wait for the transaction to be mined
+                const receipt = await deploySubContractResult.wait();
+
+                console.log('Contract deployed at:', deploySubContractResult.to);
+  
+                console.log('Subcontract deployed successfully',receipt);
+                history(`/user_login?contractAddress=${receipt.logs[0].args.contractAddress}`);
+              } catch (error) {
+                console.error('Error calling deploySubContract function:', error.message);
+                console.log(error);
+              }
+            },
+            (error) => {
+              console.log(error.text);
+            }
+          );
+      } catch (error) {
+        console.error('Error using private key:', error.message);
+        console.log(error);
+      }
+    };
+  
+
   return (
     <html lang="en">
       <head>
@@ -45,7 +216,7 @@ const Sign_up = () => {
           </div>
 
           <div className="bg-pink-here max-w-7xl pl-10 pr-20 rounded-3xl border-4 border-blue-here">
-            <form className="font-kelly ml-10 mt-5 space-y-2">
+            <form ref={form} onSubmit={handleSubmit} className="font-kelly ml-10 mt-5 space-y-2">
               {/* Full Name */}
               <label htmlFor="fullname" className="text-3xl mt-8">
                 Full Name
@@ -53,6 +224,7 @@ const Sign_up = () => {
               <br />
               <input
                 type="text"
+                name = "fullname"
                 placeholder="Full Name"
                 required
                 className="h-10 w-96 px-5 focus:border-blue-here focus:border-4 hover:border-blue-here hover:border-4"
@@ -67,6 +239,7 @@ const Sign_up = () => {
               <br />
               <input
                 type="email"
+                name = "email"
                 placeholder="Email"
                 required
                 className="font-normal h-10 w-96 px-5 focus:border-blue-here focus:border-4 hover:border-blue-here hover:border-4"
@@ -81,6 +254,7 @@ const Sign_up = () => {
               <br />
               <input
                 type="text"
+                name ="address"
                 placeholder="Address"
                 required
                 className="h-10 w-96 px-5 focus:border-blue-here focus:border-4 hover:border-blue-here hover:border-4"
@@ -95,6 +269,7 @@ const Sign_up = () => {
               <br />
               <input
                 type="text"
+                name = "aadhar"
                 placeholder="Aadhar No."
                 required
                 className="h-10 w-96 px-5 focus:border-blue-here focus:border-4 hover:border-blue-here hover:border-4"
@@ -109,15 +284,24 @@ const Sign_up = () => {
               <br />
               <input
                 type="password"
+                name = "password"
                 placeholder="Password"
                 required
                 className="h-10 w-96 px-5 focus:border-blue-here focus:border-4 hover:border-blue-here hover:border-4"
+              />
+              <input
+                type="text"
+                name = "username"
+                placeholder="text"
+                required
+                className="absolute hidden h-10 w-96 focus:border-blue-here focus:border-4 hover:border-blue-here hover:border-4"
+                defaultValue={_username}
               />
               <br />
 
               {/* Buttons */}
               <br />
-              <button className="rounded-2xl bg-background h-12 w-96 border-4 border-blue-here hover:border-background hover:bg-opacity-40 hover:text-black">
+              <button type="submit" className="rounded-2xl bg-background h-12 w-96 border-4 border-blue-here hover:border-background hover:bg-opacity-40 hover:text-black">
                 <a href="#!">SUBMIT</a>
               </button>
               <br />
