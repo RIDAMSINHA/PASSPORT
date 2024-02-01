@@ -9,7 +9,7 @@ import PasswordChangeRequest from './components/Password';
 import PassportDetailsForm from './components/Redirect';
 import Signup_gov from './components/Signup_gov';
 import Sign_up from './components/Sign_up';
-// import User from './components/User';
+import User from './components/User';
 
 
 function App() {
@@ -27,7 +27,7 @@ function App() {
           <Route path="/approve" element={<PassportSystem />} errorElement={<ErrorPage />} />
           <Route path="/change_password" element={<PasswordChangeRequest />} errorElement={<ErrorPage />} />
           <Route path="/redirect" element={<PassportDetailsForm />} errorElement={<ErrorPage />} />
-          {/* <Route path="/user" element={<User />} errorElement={<ErrorPage />} /> */}
+          <Route path="/user" element={<User />} errorElement={<ErrorPage />} />
         </Routes>
       </div>
     </Router>
