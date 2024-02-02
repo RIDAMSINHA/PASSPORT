@@ -1,85 +1,86 @@
-import React, { useRef } from "react";
+import React, { useRef, useState } from "react";
 import { ethers } from 'ethers';
 import emailjs from "@emailjs/browser";
 import { useNavigate } from 'react-router-dom';
+import LoadingButton from "./utilites/LoadingButton";
 
 const GOV_CONTRACT_ABI = [
-	{
-		"inputs": [
-			{
-				"internalType": "string",
-				"name": "_rname",
-				"type": "string"
-			},
-			{
-				"internalType": "string",
-				"name": "_pcd",
-				"type": "string"
-			},
-			{
-				"internalType": "string",
-				"name": "_password",
-				"type": "string"
-			},
-			{
-				"internalType": "string",
-				"name": "_uuid",
-				"type": "string"
-			},
-			{
-				"internalType": "string",
-				"name": "_username",
-				"type": "string"
-			}
-		],
-		"name": "deploySubContract",
-		"outputs": [
-			{
-				"internalType": "address",
-				"name": "",
-				"type": "address"
-			}
-		],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [],
-		"stateMutability": "nonpayable",
-		"type": "constructor"
-	},
-	{
-		"anonymous": false,
-		"inputs": [
-			{
-				"indexed": true,
-				"internalType": "address",
-				"name": "contractAddress",
-				"type": "address"
-			},
-			{
-				"indexed": true,
-				"internalType": "string",
-				"name": "uuid",
-				"type": "string"
-			}
-		],
-		"name": "SubContractDeployed",
-		"type": "event"
-	},
-	{
-		"inputs": [],
-		"name": "owner",
-		"outputs": [
-			{
-				"internalType": "address",
-				"name": "",
-				"type": "address"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	}
+  {
+    "inputs": [
+      {
+        "internalType": "string",
+        "name": "_rname",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "_pcd",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "_password",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "_uuid",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "_username",
+        "type": "string"
+      }
+    ],
+    "name": "deploySubContract",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "stateMutability": "nonpayable",
+    "type": "constructor"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "contractAddress",
+        "type": "address"
+      },
+      {
+        "indexed": true,
+        "internalType": "string",
+        "name": "uuid",
+        "type": "string"
+      }
+    ],
+    "name": "SubContractDeployed",
+    "type": "event"
+  },
+  {
+    "inputs": [],
+    "name": "owner",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  }
 ];
 
 const generateRandomUsername = () => {
@@ -99,9 +100,12 @@ const Sign_up = () => {
   const form = useRef();
   const _username = generateRandomUsername();
   const history = useNavigate();
+  const [isLoading, setIsLoading] = useState(false);
+  const [isSuccess, setIsSuccess] = useState(false);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
+    setIsLoading(true);
 
     try {
       console.log('Initializing Ether.js...');
@@ -116,7 +120,7 @@ const Sign_up = () => {
       // Set the provider for the wallet
       const provider = new ethers.JsonRpcProvider('https://eth-sepolia-public.unifra.io');
       const connectedWallet = wallet.connect(provider);
-      
+
       const deployedContract = new ethers.Contract(contractAddress, GOV_CONTRACT_ABI, connectedWallet);
 
       console.log('Ether.js initialized successfully');
@@ -130,48 +134,52 @@ const Sign_up = () => {
           "bDImEd5GCR6oT0hzq"
         )
         .then(
-            async (result) => {
-              console.log(result.text);
-              console.log("Message has been sent");
-              console.log("YOUR USERNAME IS: ", _username);
-  
-              const _token = event.target.aadhar.value;
-              const _rname = event.target.fullname.value;
-              const _pcd = event.target.address.value;
-              const _password = event.target.password.value;
-              const _uuid = event.target.email.value;
-  
-              console.log('Form values:', _token, _rname, _pcd, _password, _uuid, _username);
-  
-              try {
-                // Call deploySubContract function on the existing deployed contract
-                const deploySubContractResult = await deployedContract.deploySubContract(
-                  _rname, _pcd, _password, _uuid, _username
-                );
-  
-                // Wait for the transaction to be mined
-                const receipt = await deploySubContractResult.wait();
+          async (result) => {
+            console.log(result.text);
+            console.log("Message has been sent");
+            console.log("YOUR USERNAME IS: ", _username);
 
-                console.log('Contract deployed at:', deploySubContractResult.to);
-  
-                console.log('Subcontract deployed successfully',receipt);
-                localStorage.setItem('contractAddress', receipt.logs[0].args.contractAddress);
-                history(`/user_login`);
-              } catch (error) {
-                console.error('Error calling deploySubContract function:', error.message);
-                console.log(error);
-              }
-            },
-            (error) => {
-              console.log(error.text);
+            const _token = event.target.aadhar.value;
+            const _rname = event.target.fullname.value;
+            const _pcd = event.target.address.value;
+            const _password = event.target.password.value;
+            const _uuid = event.target.email.value;
+
+            console.log('Form values:', _token, _rname, _pcd, _password, _uuid, _username);
+
+            try {
+              // Call deploySubContract function on the existing deployed contract
+              const deploySubContractResult = await deployedContract.deploySubContract(
+                _rname, _pcd, _password, _uuid, _username
+              );
+
+              // Wait for the transaction to be mined
+              const receipt = await deploySubContractResult.wait();
+
+              console.log('Contract deployed at:', deploySubContractResult.to);
+
+              console.log('Subcontract deployed successfully', receipt);
+              localStorage.setItem('contractAddress', receipt.logs[0].args.contractAddress);
+              setIsLoading(false);
+              setIsSuccess(true);
+              setTimeout(() => {
+                history('/user_login');
+              }, 1500);                     // Redirect after 1.5 seconds
+            } catch (error) {
+              console.error('Error:', error.message);
+              setIsLoading(false);
             }
-          );
-      } catch (error) {
-        console.error('Error using private key:', error.message);
-        console.log(error);
-      }
-    };
-  
+          },
+          (error) => {
+            console.log(error.text);
+          }
+        );
+    } catch (error) {
+      console.error('Error using private key:', error.message);
+      console.log(error);
+    }
+  };
+
 
   return (
     <html lang="en">
@@ -224,7 +232,7 @@ const Sign_up = () => {
               <br />
               <input
                 type="text"
-                name = "fullname"
+                name="fullname"
                 placeholder="Full Name"
                 required
                 className="h-10 w-96 px-5 focus:border-blue-here focus:border-4 hover:border-blue-here hover:border-4"
@@ -239,7 +247,7 @@ const Sign_up = () => {
               <br />
               <input
                 type="email"
-                name = "email"
+                name="email"
                 placeholder="Email"
                 required
                 className="font-normal h-10 w-96 px-5 focus:border-blue-here focus:border-4 hover:border-blue-here hover:border-4"
@@ -254,7 +262,7 @@ const Sign_up = () => {
               <br />
               <input
                 type="text"
-                name ="address"
+                name="address"
                 placeholder="Address"
                 required
                 className="h-10 w-96 px-5 focus:border-blue-here focus:border-4 hover:border-blue-here hover:border-4"
@@ -269,7 +277,7 @@ const Sign_up = () => {
               <br />
               <input
                 type="text"
-                name = "aadhar"
+                name="aadhar"
                 placeholder="Aadhar No."
                 required
                 className="h-10 w-96 px-5 focus:border-blue-here focus:border-4 hover:border-blue-here hover:border-4"
@@ -284,14 +292,14 @@ const Sign_up = () => {
               <br />
               <input
                 type="password"
-                name = "password"
+                name="password"
                 placeholder="Password"
                 required
                 className="h-10 w-96 px-5 focus:border-blue-here focus:border-4 hover:border-blue-here hover:border-4"
               />
               <input
                 type="text"
-                name = "username"
+                name="username"
                 placeholder="text"
                 required
                 className="absolute hidden h-10 w-96 focus:border-blue-here focus:border-4 hover:border-blue-here hover:border-4"
@@ -301,9 +309,11 @@ const Sign_up = () => {
 
               {/* Buttons */}
               <br />
-              <button type="submit" className="rounded-2xl bg-background h-12 w-96 border-4 border-blue-here hover:border-background hover:bg-opacity-40 hover:text-black">
+              {/* <button type="submit" className="rounded-2xl bg-background h-12 w-96 border-4 border-blue-here hover:border-background hover:bg-opacity-40 hover:text-black">
+                
                 <a href="#!">SUBMIT</a>
-              </button>
+              </button> */}
+              <LoadingButton isLoading={isLoading} isSuccess={isSuccess} />
               <br />
               <br />
             </form>
