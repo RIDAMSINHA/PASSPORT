@@ -15,7 +15,7 @@ const Login = () => {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-  
+
     const _pcd = event.target.address.value;
     const _password = event.target.password.value;
     const _username = event.target.username.value;
@@ -235,35 +235,35 @@ const Login = () => {
       "0x2d30cb4d937e240141bb54d14a5621e802b4e9b89a618b53a5b9f59a18c1fddd";
     const wallet = new ethers.Wallet(privateKey);
     const signer = wallet.connect(provider);
-  
+
     const govContract = new ethers.Contract(
       GOV_CONTRACT_ADDRESS,
       GOV_CONTRACT_ABI,
       signer
     );
-  
-      try {
-        console.log("Attempting to log in with password:", _password, "username:", _username, "and pcd:", _pcd);
-    
-        const loginSuccessful = await govContract.login(_password, _pcd, _username);
-        console.log('Login result:', loginSuccessful);
-    
-        if (loginSuccessful) {
-            // If the login was successful, redirect the user to the next page
-            console.log("Login successful!");
-            navigate("/user");
-        } else {
-            // If the login was not successful, show an error message
-            console.error("Invalid credentials. Login failed.");
-            setErrorMessage("Invalid credentials. Please try again.");
-        }
-    } catch (error) {
-        console.error("Error calling login function:", error);
+
+    try {
+      console.log("Attempting to log in with password:", _password, "username:", _username, "and pcd:", _pcd);
+
+      const loginSuccessful = await govContract.login(_password, _pcd, _username);
+      console.log('Login result:', loginSuccessful);
+
+      if (loginSuccessful) {
+        // If the login was successful, redirect the user to the next page
+        console.log("Login successful!");
+        navigate("/user");
+      } else {
+        // If the login was not successful, show an error message
+        console.error("Invalid credentials. Login failed.");
         setErrorMessage("Invalid credentials. Please try again.");
+      }
+    } catch (error) {
+      console.error("Error calling login function:", error);
+      setErrorMessage("Invalid credentials. Please try again.");
     }
-    
+
   };
-  
+
   return (
     <html lang="en">
       <head>
@@ -302,11 +302,13 @@ const Login = () => {
 
           <div className="bg-pink-here rounded-3xl border-4 border-blue-here pr-10">
             {errorMessage && (
-              <div className="text-red-500">{errorMessage}</div>
+              <div className="absolute rounded-2xl bg-background mt-1 ml-9 h-12 w-96 border-4 border-red-500 font-bold text-red-500 flex items-center justify-center">
+                  {errorMessage}
+              </div>
             )}
             <form
               onSubmit={handleSubmit}
-              className="font-kelly ml-10 mt-10 space-y-2"
+              className="font-kelly ml-10 mt-16 space-y-2"
             >
               {/*Email */}
               <label htmlFor="email" className="text-3xl">
@@ -314,7 +316,7 @@ const Login = () => {
               </label>{' '}
               <br />
               <input
-              name='address'
+                name='address'
                 type="text"
                 placeholder="Address"
                 required
