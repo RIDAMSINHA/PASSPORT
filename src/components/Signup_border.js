@@ -2,13 +2,11 @@ import React, { useContext, useRef, useState } from 'react';
 import '../styles/style.css';
 import { ethers } from 'ethers';
 import GOV_CONTRACT_ABI from './Contract/gov.json';
-import { SubContractContext } from './utilites/SubContractContext';
 import { useNavigate } from 'react-router-dom';
 import LoadingButton from "./utilites/LoadingButton";
 import axios from 'axios';
 
-const Signup_gov = () => {
-  const { setAnotherAddress } = useContext(SubContractContext);
+const Signup_border = () => {
   const form = useRef();
   const history = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
@@ -46,7 +44,7 @@ const Signup_gov = () => {
 
       console.log('Formatted Receipt:', response.data);
 
-      const response1 = await axios.post('http://localhost:5000/get_border_authority', {
+      const response1 = await axios.post('http://localhost:5000/get_borderauthority', {
         _email
       });
 
@@ -178,7 +176,7 @@ const Signup_gov = () => {
 
               {/* Govt ID */}
               <label htmlFor="address" className="text-3xl mt-8">
-                Government ID
+                Border ID
               </label>
               <br />
               <input
@@ -236,4 +234,4 @@ const Signup_gov = () => {
   );
 };
 
-export default Signup_gov;
+export default Signup_border;
