@@ -1,82 +1,53 @@
-import React, { useContext, useRef, useState } from 'react';
+import React, {  useRef, useState } from 'react';
 import '../styles/style.css';
 import { ethers } from 'ethers';
 import GOV_CONTRACT_ABI from './Contract/gov.json';
-import { SubContractContext } from './utilites/SubContractContext';
-import { useNavigate } from 'react-router-dom';
 import LoadingButton from "./utilites/LoadingButton";
-import axios from 'axios';
 
-const Signup_gov = () => {
-  const { setAnotherAddress } = useContext(SubContractContext);
+const Signup_visa = () => {
   const form = useRef();
-  const history = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
     setIsLoading(true);
-    const formData = new FormData(form.current);
-
-    const _rname = formData.get('fullname');
-    const _id = formData.get('address');
-    const _password = formData.get('password');
-    const _email = formData.get('email');
 
     try {
+      const formData = new FormData(form.current);
+      const _id = formData.get('address');
+      const _password = formData.get('password');
+
       console.log('Initializing Ether.js...');
       const GOV_CONTRACT_ADDRESS = process.env.REACT_APP_CONTRACT_ADDRESS;
       const abi = GOV_CONTRACT_ABI.abi;
 
-      // Initialize ethers by connecting to the network
       const provider = new ethers.JsonRpcProvider(process.env.REACT_APP_RPC_URL);
       const privateKey = process.env.REACT_APP_PRIVATE_KEY;
       const wallet = new ethers.Wallet(privateKey);
       const signer = wallet.connect(provider);
       console.log("Ether.js initialized!!");
 
-      console.log('Form values:', _rname, _id, _password, _email);
-      // Send form data to the backend
-      const response = await axios.post('http://localhost:5000/submit_form', {
-        _password,
-        _email,
-        _id
-      });
+      console.log("id:", _id, "password:", _password);
+      const govContract = new ethers.Contract(GOV_CONTRACT_ADDRESS, abi, signer);
+      const tx = await govContract.deployVisaContract(_id,_password);
+      const receipt = await tx.wait();
+      console.log('Subcontract VISA successfully deployed.', receipt);
 
-      console.log('Formatted Receipt:', response.data);
-
-      const response1 = await axios.post('http://localhost:5000/get_border_authority', {
-        _email
-      });
-
-      console.log('Formatted Address:', response1.data);
-      // const govContract = new ethers.Contract(GOV_CONTRACT_ADDRESS, abi, signer);
-      // const tx = await govContract.deployBorderAuthorityContract(_password, _id, _email);
-
-      // const receipt = await tx.wait();
-      // console.log('Transaction Receipt:', receipt);
-
-      // // Getting bordersubcontract addr.
-      // const getBorderSubContract = await govContract.getBorderAuthority(_id);
-      // setAnotherAddress(getBorderSubContract);
-      // console.log('BorderSubcontract address:', getBorderSubContract);
-
-        // console.log('Sending request to backend...');
-        // const response = await axios.post('http://127.0.0.1:5000/get_border_authority', {
-        //   uuid: _id
-        // });
-        // console.log('Response from backend:', response.data);
-        // setAnotherAddress(response.data);
+      // Getting VISAcontract addr.
+      // const getVisaSubContract = await govContract.getVisa(_id);
+      // console.log('VISA contract address:', getVisaSubContract);
+      // localStorage.setItem('contractAddress', getVisaSubContract);
 
       setIsLoading(false);
       setIsSuccess(true);
       setTimeout(() => {
-        history('/border_login');
-      }, 1500);                     // Redirect after 1.5 seconds
+        window.location.href = `/visa_login`;
+      }, 1500); // Redirect after 1.5 seconds
 
     } catch (error) {
       console.error('Error deploying contract:', error.message);
+      setIsLoading(false);
     }
   };
 
@@ -87,11 +58,10 @@ const Signup_gov = () => {
     const _rname = form.current.elements.fullname.value;
     const _email = form.current.elements.email.value;
     const _id = form.current.elements.address.value;
-    const _mobile = form.current.elements.aadhar.value;
     const _password = form.current.elements.password.value;
     
 
-    if (_rname && _email && _id && _mobile && _password ) {
+    if (_rname && _email && _id && _password ) {
       // All required fields are filled, proceed with form submission
       if (!isLoading) {
         handleSubmit(event);
@@ -176,9 +146,9 @@ const Signup_gov = () => {
               <br />
               <br />
 
-              {/* Govt ID */}
+              {/* VISA ID */}
               <label htmlFor="address" className="text-3xl mt-8">
-                Government ID
+                ID
               </label>
               <br />
               <input
@@ -192,7 +162,7 @@ const Signup_gov = () => {
               <br />
 
               {/* Mobile Number */}
-              <label htmlFor="aadhar" className="text-3xl mt-8">
+              {/* <label htmlFor="aadhar" className="text-3xl mt-8">
                 Mobile Number
               </label>
               <br />
@@ -204,7 +174,7 @@ const Signup_gov = () => {
                 className="h-10 w-96 px-5 focus:border-blue-here focus:border-4 hover:border-blue-here hover:border-4"
               />{' '}
               <br />
-              <br />
+              <br /> */}
 
               {/* Password */}
               <label htmlFor="password" className="text-3xl">
@@ -236,4 +206,4 @@ const Signup_gov = () => {
   );
 };
 
-export default Signup_gov;
+export default Signup_visa;

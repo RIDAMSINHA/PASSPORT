@@ -1,87 +1,19 @@
-import React, { useRef, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import { ethers } from 'ethers';
 import emailjs from "@emailjs/browser";
 import { useNavigate } from 'react-router-dom';
 import LoadingButton from "./utilites/LoadingButton";
+import GOV_CONTRACT_ABI from './Contract/gov.json';
+import { SubContractContext } from './utilites/SubContractContext';
 
-const GOV_CONTRACT_ABI = [
-  {
-    "inputs": [
-      {
-        "internalType": "string",
-        "name": "_rname",
-        "type": "string"
-      },
-      {
-        "internalType": "string",
-        "name": "_pcd",
-        "type": "string"
-      },
-      {
-        "internalType": "string",
-        "name": "_password",
-        "type": "string"
-      },
-      {
-        "internalType": "string",
-        "name": "_uuid",
-        "type": "string"
-      },
-      {
-        "internalType": "string",
-        "name": "_username",
-        "type": "string"
-      }
-    ],
-    "name": "deploySubContract",
-    "outputs": [
-      {
-        "internalType": "address",
-        "name": "",
-        "type": "address"
-      }
-    ],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "stateMutability": "nonpayable",
-    "type": "constructor"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": true,
-        "internalType": "address",
-        "name": "contractAddress",
-        "type": "address"
-      },
-      {
-        "indexed": true,
-        "internalType": "string",
-        "name": "uuid",
-        "type": "string"
-      }
-    ],
-    "name": "SubContractDeployed",
-    "type": "event"
-  },
-  {
-    "inputs": [],
-    "name": "owner",
-    "outputs": [
-      {
-        "internalType": "address",
-        "name": "",
-        "type": "address"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  }
-];
+
+// Load environment variables
+const PRIVATE_KEY = process.env.REACT_APP_PRIVATE_KEY;
+const RPC_URL = process.env.REACT_APP_RPC_URL;
+const CONTRACT_ADDRESS = process.env.REACT_APP_CONTRACT_ADDRESS;
+// console.log("PRIVATE_KEY: ", PRIVATE_KEY);
+// console.log("RPC_URL: ", RPC_URL);
+// console.log("CONTRACT_ADDRESS: ", CONTRACT_ADDRESS);
 
 const generateRandomUsername = () => {
   const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
@@ -102,6 +34,7 @@ const Sign_up = () => {
   const history = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
+  // const { setSubContractAddress } = useContext(SubContractContext);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -110,73 +43,91 @@ const Sign_up = () => {
     try {
       console.log('Initializing Ether.js...');
 
-      // Use your private key here. Replace 'YOUR_PRIVATE_KEY' with your actual private key.
-      const privateKey = '0x2d30cb4d937e240141bb54d14a5621e802b4e9b89a618b53a5b9f59a18c1fddd';
+      const formData = new FormData(form.current);
+
+      const privateKey = PRIVATE_KEY;
       const wallet = new ethers.Wallet(privateKey);
 
-      // Assume contractAddress is the address of the already deployed contract on the testnet
-      const contractAddress = '0x4477155916D26C8b15E8FD335D0Ed074bBD8150D';
+      const Gov_contractAddress = CONTRACT_ADDRESS;
 
       // Set the provider for the wallet
-      const provider = new ethers.JsonRpcProvider('https://eth-sepolia-public.unifra.io');
+      const provider = new ethers.JsonRpcProvider(RPC_URL);
       const connectedWallet = wallet.connect(provider);
 
-      const deployedContract = new ethers.Contract(contractAddress, GOV_CONTRACT_ABI, connectedWallet);
+      const gov_abi = GOV_CONTRACT_ABI.abi;
+      const Gov_Contract = new ethers.Contract(Gov_contractAddress, gov_abi, connectedWallet);
 
       console.log('Ether.js initialized successfully');
 
       // Access form ref directly
-      emailjs
-        .sendForm(
-          "service_innq1uf",
-          "template_s6bqlrp",
-          form.current,
-          "bDImEd5GCR6oT0hzq"
-        )
-        .then(
-          async (result) => {
-            console.log(result.text);
-            console.log("Message has been sent");
-            console.log("YOUR USERNAME IS: ", _username);
+      // emailjs
+      //   .sendForm(
+      //     "service_innq1uf",
+      //     "template_s6bqlrp",
+      //     form.current,
+      //     "bDImEd5GCR6oT0hzq"
+      //   )
+      //   .then(
+      //     async (result) => {
+      //       console.log(result.text);
+      //       console.log("Message has been sent");
+      //       console.log("YOUR USERNAME IS: ", _username);
 
-            const _token = event.target.aadhar.value;
-            const _rname = event.target.fullname.value;
-            const _pcd = event.target.address.value;
-            const _password = event.target.password.value;
-            const _uuid = event.target.email.value;
+      // Getting Form values:
+      const _aadhar = formData.get('aadhar');
+      const _rname = formData.get('fullname');
+      const _pcd = formData.get('address');
+      const _password = formData.get('password');
+      const _uuid = formData.get('email');
 
-            console.log('Form values:', _token, _rname, _pcd, _password, _uuid, _username);
+      console.log('Form values:', _aadhar, _rname, _password, _uuid, _username);
 
-            try {
-              // Call deploySubContract function on the existing deployed contract
-              const deploySubContractResult = await deployedContract.deploySubContract(
-                _rname, _pcd, _password, _uuid, _username
-              );
+      try {
+        // Call deploySubContract function on the existing Gov_contract
+        const deploySubContractResult = await Gov_Contract.deploySubContract(_password, _uuid, _username);
+        // Wait for the transaction to be mined
+        const receipt = await deploySubContractResult.wait();
+        console.log('Subcontract Gov_ successfully deployed.', receipt);
 
-              // Wait for the transaction to be mined
-              const receipt = await deploySubContractResult.wait();
-
-              console.log('Contract deployed at:', deploySubContractResult.to);
-
-              console.log('Subcontract deployed successfully', receipt);
-              localStorage.setItem('contractAddress', receipt.logs[0].args.contractAddress);
-              setIsLoading(false);
-              setIsSuccess(true);
-              setTimeout(() => {
-                history('/user_login');
-              }, 1500);                     // Redirect after 1.5 seconds
-            } catch (error) {
-              console.error('Error:', error.message);
-              setIsLoading(false);
-            }
-          },
-          (error) => {
-            console.log(error.text);
-          }
-        );
+        // Getting subcontract addr.
+        // const getSubContract = await Gov_Contract.getSubContractDetails(_uuid);
+        // setSubContractAddress(getSubContract);
+        // console.log('Subcontract address:', getSubContract);
+        // document.cookie = `address=${getSubContract}; path=/user_login`;
+        
+        setIsLoading(false);
+        setIsSuccess(true);
+        setTimeout(() => {
+          history('/user_login');
+        }, 1500);                     // Redirect after 1.5 seconds
+      } catch (error) {
+        console.error('Error:', error.message);
+        setIsLoading(false);
+      }
     } catch (error) {
       console.error('Error using private key:', error.message);
       console.log(error);
+    }
+  };
+
+  const handleButtonClick = (event) => {
+    event.preventDefault();
+
+    // Check if all required fields are filled
+    const fullName = form.current.elements.fullname.value;
+    const email = form.current.elements.email.value;
+    const address = form.current.elements.address.value;
+    const aadhar = form.current.elements.aadhar.value;
+    const password = form.current.elements.password.value;
+
+    if (fullName && email && address && aadhar && password) {
+      // All required fields are filled, proceed with form submission
+      if (!isLoading) {
+        handleSubmit(event);
+      }
+    } else {
+      // Display an error message or handle the empty fields case as needed
+      alert('Please fill in all required fields');
     }
   };
 
@@ -313,7 +264,7 @@ const Sign_up = () => {
                 
                 <a href="#!">SUBMIT</a>
               </button> */}
-              <LoadingButton isLoading={isLoading} isSuccess={isSuccess} />
+              <LoadingButton isLoading={isLoading} isSuccess={isSuccess} onClick={handleButtonClick} />
               <br />
               <br />
             </form>

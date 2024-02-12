@@ -1,28 +1,56 @@
-import React, { useRef, useEffect } from "react";
+import React, { useEffect, useState } from "react";
+import { ethers } from 'ethers';
 import "../styles/style.css";
 import { Link } from "react-router-dom";
+import DETAIL_CONTRACT_ABI from './Contract/detail.json';
 
 const User = () => {
-  const arrowRef1 = useRef(null);
-  const arrowRef2 = useRef(null);
-
+  const [contractInfo, setContractInfo] = useState({
+    Name: "",
+    Age: "",
+    Date_of_Birth: "",
+    Fathername: "",
+    Gender: "",
+    Nationality: "",
+    Address: "",
+    Pincode: "",
+    Email: "",
+    Aadhar: "",
+    Image: "../images/userimg.png",
+  });
+  const [imgUrl, setImgUrl] = useState(null);
+  
   useEffect(() => {
-    const toggleDropdown = (buttonId, dropdownId) => {
-      const dropdown = document.getElementById(dropdownId);
-      dropdown.classList.toggle("hidden");
+    const fetchUserDetails = async () => {
+      const provider = new ethers.JsonRpcProvider(process.env.REACT_APP_RPC_URL);
+      const privateKey = process.env.REACT_APP_PRIVATE_KEY;
+      const wallet = new ethers.Wallet(privateKey);
+      const signer = wallet.connect(provider);
+      const userDetailsContractAddress = process.env.REACT_APP_DETAIL_CONTRACT_ADDRESS;
+      const userDetailsContractAbi = DETAIL_CONTRACT_ABI.abi;
+
+      const userDetailsContract = new ethers.Contract(userDetailsContractAddress, userDetailsContractAbi, signer);
+
+      const userDetails = await userDetailsContract.getUserDetails();
+
+      const imageUrl = `https://ipfs.io/ipfs/${userDetails.ipfsHash}`; // Construct the image URL
+
+      setContractInfo({
+        Name: userDetails.name,
+        Age: userDetails.age.toString(),
+        Date_of_Birth: userDetails.dateOfBirth,
+        Fathername: userDetails.fatherName,
+        Gender: userDetails.gender,
+        Nationality: userDetails.nationality,
+        Address: userDetails.userAddress,
+        Pincode: userDetails.pincode.toString(),
+        Email: userDetails.email, 
+        Aadhar: userDetails.aadhar,
+        Image: imageUrl,
+      });
     };
 
-    document.addEventListener("DOMContentLoaded", function () {
-      arrowRef2.current.addEventListener("click", function () {
-        toggleDropdown("arrowx2", "arrow2");
-      });
-    });
-
-    document.addEventListener("DOMContentLoaded", function () {
-      arrowRef1.current.addEventListener("click", function () {
-        toggleDropdown("arrowx1", "arrow1");
-      });
-    });
+    fetchUserDetails();
   }, []);
 
   return (
@@ -126,13 +154,13 @@ const User = () => {
             </ul>
 
             <button type="submit">
-            <Link to="/sign_up">
-              <img
-                src="../images/sign-out.png"
-                alt="LOGO"
-                className="h-12 mt-5 mx-8"
-              />
-            </Link>
+              <Link to="/user_login">
+                <img
+                  src="../images/sign-out.png"
+                  alt="LOGO"
+                  className="h-12 mt-5 mx-8"
+                />
+              </Link>
             </button>
           </div>
           <hr className="border-b-2 border-black" />
@@ -141,26 +169,54 @@ const User = () => {
           <div className="flex ml-56 pl-20 pt-8 pb-8 space-x-20">
             {/* ... User image ... */}
             <img
-              src="../images/userimg.png"
+              src={contractInfo.Image}
               className="h-56 rounded-xl"
               alt="user-photo"
             />
-            <ul className="bg-pink-here rounded-3xl w-1/2 pl-10 pt-10 pb-10 bg-opacity-50 shadow-xl font-kons">
+            <table className="bg-pink-here rounded-3xl w-1/2 pl-10 pt-10 pb-10 bg-opacity-50 shadow-xl text-xl font-kelly">
               {/* ... User details ... */}
-              <li>Name:</li>
-              <li>Age:</li>
-              <li>Date of Birth:</li>
-              <li>Father's Name:</li>
-              <li>Gender:</li>
-              <li>Nationality:</li>
-              <li>Address:</li>
-              <li>Pincode:</li>
-              <li>Email:</li>
-              <li>Aadhar no.:</li>
-              <li>Passport no.:</li>
-              <li>Date of Issue:</li>
-              <li>Expiry Date:</li>
-            </ul>
+              <tr className="flex p-2 pl-8 pt-4">
+                <td className="w-60">Name:</td> <td>{contractInfo.Name}</td>
+              </tr>
+              <tr className="flex pl-8 p-2">
+                <td className="w-60"> Age:</td><td>{contractInfo.Age}</td>
+              </tr>
+              <tr className="flex pl-8 p-2">
+                <td className="w-60">Date of Birth:</td> <td>{contractInfo.Date_of_Birth}</td>
+              </tr>
+              <tr className="flex pl-8 p-2">
+                <td className="w-60">Father's Name:</td> <td>{contractInfo.Fathername}</td>
+              </tr>
+              <tr className="flex pl-8 p-2">
+                <td className="w-60">Gender:</td> <td>{contractInfo.Gender}</td>
+              </tr>
+              <tr className="flex pl-8 p-2">
+                <td className="w-60"> Nationality:</td>
+                <td>{contractInfo.Nationality}</td>
+              </tr>
+              <tr className="flex pl-8 p-2">
+                <td className="w-60">Address:</td> <td>{contractInfo.Address}</td>
+              </tr>
+              <tr className="flex pl-8 p-2">
+                <td className="w-60">Pincode:</td> <td>{contractInfo.Pincode}</td>
+              </tr>
+              <tr className="flex pl-8 p-2">
+                <td className="w-60">Email:</td> <td>{contractInfo.Email}</td>
+              </tr>
+              <tr className="flex pl-8 p-2">
+                <td className="w-60">Aadhar no.:</td> <td>{contractInfo.Aadhar}</td>
+              </tr>
+              {/* <tr className="flex pl-8 p-2">
+                <td className="w-60">Passport no.:</td> 
+                <td>{contractInfo.Passport}</td>
+              </tr>
+              <tr className="flex pl-8 p-2">
+                <td className="w-60">Date of Issue:</td> <td>{contractInfo.doi}</td>
+              </tr>
+              <tr className="flex pl-8 pb-8 p-2">
+                <td className="w-60">Expiry Date:</td> <td>{contractInfo.expiry}</td>
+              </tr> */}
+            </table>
           </div>
 
           <hr className="border-b-2 border-black" />

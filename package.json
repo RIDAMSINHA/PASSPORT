@@ -2,9 +2,12 @@
   "name": "passport",
   "version": "0.1.0",
   "private": true,
+  "proxy":"http://127.0.0.1:5000",
   "dependencies": {
     "@emailjs/browser": "^3.12.1",
     "@ethersproject/providers": "^5.7.2",
+    "@fleekhq/fleek-storage-js": "^1.0.24",
+    "@helia/strings": "^3.0.0",
     "@testing-library/jest-dom": "^5.17.0",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
@@ -14,8 +17,12 @@
     "dotenv": "^16.4.1",
     "ethereumjs-tx": "^2.1.2",
     "ethers": "^6.10.0",
+    "fs": "^0.0.1-security",
+    "helia": "^4.0.1",
     "http": "^0.0.1-security",
     "https-browserify": "^1.0.0",
+    "ipfs-api": "^26.1.2",
+    "ipfs-http-client": "^60.0.1",
     "nodemailer": "^6.9.8",
     "os-browserify": "^0.3.0",
     "react": "^18.2.0",
@@ -53,6 +60,7 @@
     ]
   },
   "devDependencies": {
+    "dotenv-webpack": "^8.0.1",
     "tailwindcss": "^3.4.1",
     "webpack": "^5.90.0"
   }

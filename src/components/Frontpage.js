@@ -49,20 +49,24 @@ const PassportLogin = () => {
               </button>
             </a> 
             <br/><br/>
+            <Link to ="/visa_login">
             <a href="#">
               <button className="bg-pink-here h-60 w-72 rounded-3xl border-4 border-white-here font-kelly text-4xl hover:border-4 hover:border-blue-here hover:text-5xl">Visa Authority <br/>Login
               </button>
             </a> 
+            </Link>
           </div>
           <div>
-            <Link to="/gov_login">
+            <Link to="http://localhost:5000/">
               <button className="bg-pink-here h-60 w-72 rounded-3xl border-4 border-white-here font-kelly text-4xl hover:border-4 hover:border-blue-here hover:text-5xl">Government Login
               </button>
             </Link>  <br/><br/>
+            <Link to="/border_login">
             <a href="#">
               <button className="bg-pink-here h-60 w-72 rounded-3xl border-4 border-white-here font-kelly text-4xl hover:border-4 hover:border-blue-here hover:text-5xl">Border Authority Login
               </button>
             </a> 
+            </Link>
           </div>
         </div>
       </body>
