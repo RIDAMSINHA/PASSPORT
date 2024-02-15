@@ -50,9 +50,13 @@ const Visa_status = () => {
             const Visacontract = new ethers.Contract(getSubContract, Visaabi, signer);
             console.log("Visa Contract Initialized!!");
 
-            console.log("id:", SubContract, "status:", status);
-            const tx = await Visacontract.setVisaStatus(SubContract, status);
-            await tx.wait();
+            // Convert status string to boolean
+            const statusBool = status.toLowerCase() === 'approve' ? true : false;
+
+            console.log("id:", SubContract, "status:", statusBool);
+            const tx = await Visacontract.setVisaStatus(SubContract, statusBool);
+            const st = await tx.wait();
+            console.log("Transaction :", st);
             console.log("Status SET!!")
 
             // Reset form fields after successful transaction
@@ -95,11 +99,12 @@ const Visa_status = () => {
     };
 
     // Render status dynamically
-    const renderedStatuses = statusesAndNotes.map(status => (
-        <div key={status}>
+    const renderedStatuses = statusesAndNotes.map((status, index) => (
+        <div key={index}> {/* Use index as the key */}
             {status ? "Approved" : "Revoked"}
         </div>
     ));
+    
 
     // Render visa page
     return (
@@ -133,31 +138,20 @@ const Visa_status = () => {
                                 <label htmlFor="status" className="px-8 pr-12">Status:</label>
                             </td>
                             <td>
-                                <input
-                                    type="text"
-                                    className="rounded-xl p-5 w-96 mb-5"
+                                <select
                                     id="status"
                                     name="status"
                                     value={status}
                                     onChange={(e) => setStatus(e.target.value)}
-                                    placeholder="Enter status"
+                                    className="rounded-xl p-5 w-96 mb-5"
                                     required
-                                />
+                                >
+                                    <option value="">Select status</option>
+                                    <option value="Approve">Approve</option>
+                                    <option value="Deny">Deny</option>
+                                </select>
                             </td>
                         </tr>
-                        {/* <tr className="h-20 text-2xl">
-                            <td><label htmlFor="note" className="px-8 pr-12">Note:</label></td>
-                            <td>
-                                <input
-                                    type="text"
-                                    id="note"
-                                    name="note"
-                                    className="rounded-xl p-5 w-96 mb-5"
-                                    placeholder="Enter note"
-                                    required
-                                />
-                            </td>
-                        </tr> */}
                     </table>
                     {/* Removed action and method attributes */}
                     <input
