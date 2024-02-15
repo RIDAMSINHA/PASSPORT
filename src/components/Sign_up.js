@@ -38,9 +38,10 @@ const Sign_up = () => {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
+    try {
     setIsLoading(true);
 
-    try {
+    
       console.log('Initializing Ether.js...');
 
       const formData = new FormData(form.current);

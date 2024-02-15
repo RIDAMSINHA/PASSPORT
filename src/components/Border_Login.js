@@ -1,27 +1,33 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useRef, useState } from 'react';
 import '../styles/style.css';
 import { ethers } from "ethers";
 import { Link } from 'react-router-dom';
 import { SubContractContext } from './utilites/SubContractContext';
 import BORDER_CONTRACT_ABI from './Contract/border.json';
 import axios from 'axios';
+import LoadingButton from "./utilites/LoadingButton";
 
 const Border_Login = () => {
+  const form = useRef();
   const [errorMessage, setErrorMessage] = useState(null);
   const [loginSuccessful, setLoginSuccessful] = useState(false);
   const { anotherAddress } = useContext(SubContractContext);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isSuccess, setIsSuccess] = useState(false);
 
   const BORDER_CONTRACT_ADDRESS = anotherAddress;
   // console.log(GOV_CONTRACT_ADDRESS);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-
-    const _uuid = event.target.email.value;
-    const _password = event.target.password.value;
-    const _id = event.target.username.value;
-
     try {
+    setIsLoading(true);
+
+    const _uuid = form.current.elements.email.value;
+    const _password = form.current.elements.password.value;
+    const _id = form.current.elements.username.value;
+
+    
       // console.log("Initiating Ether.js...");
       // // Initialize ethers by connecting to the network
       // const provider = new ethers.JsonRpcProvider(process.env.REACT_APP_RPC_URL);
@@ -59,11 +65,14 @@ const Border_Login = () => {
         console.log("Login successful!");
         setLoginSuccessful(true);
         document.cookie = `uuid=${response.data.uuid}; path=/`;
+        setIsLoading(false);
+        setIsSuccess(true);
         window.location.href = response.data.redirect_url;
         // handleRedirect();
       } else {
         console.error("Invalid credentials. Login failed.");
         setErrorMessage("Invalid credentials. Please try again.");
+        setIsLoading(false);
       }
       setTimeout(() => {
         setErrorMessage(null);
@@ -71,6 +80,7 @@ const Border_Login = () => {
     } catch (error) {
       console.error("Error calling login function:", error);
       setErrorMessage("Invalid credentials. Please try again.");
+      setIsLoading(false);
       setTimeout(() => {
         setErrorMessage(null);
       }, 3000);
@@ -87,6 +97,25 @@ const Border_Login = () => {
   //     setErrorMessage("Invalid credentials. Please try again.");
   //   }
   // };
+
+  const handleButtonClick = (event) => {
+    event.preventDefault();
+
+    // Check if all required fields are filled
+    const email = form.current.elements.email.value;
+    const password = form.current.elements.password.value;
+    const id = form.current.elements.username.value;
+
+    if (id && email && password) {
+      // All required fields are filled, proceed with form submission
+      if (!isLoading) {
+        handleSubmit(event);
+      }
+    } else {
+      // Display an error message or handle the empty fields case as needed
+      alert('Please fill in all required fields');
+    }
+  };
 
   return (
     <html lang="en">
@@ -136,7 +165,7 @@ const Border_Login = () => {
                 {errorMessage}
               </div>
             )}
-            <form onSubmit={handleSubmit} className="font-kelly ml-10 mt-10 space-y-2">
+            <form ref={form} onSubmit={handleSubmit} className="font-kelly ml-10 mt-10 space-y-2">
               {/*Email */}
               <label htmlFor="email" className="text-3xl">
                 Email
@@ -181,9 +210,10 @@ const Border_Login = () => {
 
               {/* Buttons */}
               <br />
-              <button type="submit" className="rounded-2xl bg-background h-12 w-96 border-4 border-blue-here hover:border-background hover:bg-opacity-40 hover:text-black">
+              {/* <button type="submit" className="rounded-2xl bg-background h-12 w-96 border-4 border-blue-here hover:border-background hover:bg-opacity-40 hover:text-black">
                 SUBMIT
-              </button>
+              </button> */}
+              <LoadingButton isLoading={isLoading} isSuccess={isSuccess} onClick={handleButtonClick} />
               <br />
               <button className="rounded w-96 hover:bg-background hover:text-white hover:w-40 hover:ml-28">
                 <Link to="/signup_border">New user? Signup&gt;&gt;</Link>
