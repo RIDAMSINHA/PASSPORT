@@ -1,13 +1,17 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import '../styles/style.css';
 import { ethers } from "ethers";
 import { Link, useNavigate } from 'react-router-dom';
 import VISA_CONTRACT_ABI from './Contract/visa.json';
 import GOV_CONTRACT_ABI from './Contract/gov.json';
+import LoadingButton from "./utilites/LoadingButton";
 
 const Visa_Login = () => {
+  const form = useRef();
   const navigate = useNavigate();
   const [errorMessage, setErrorMessage] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isSuccess, setIsSuccess] = useState(false);
   // const { VisaAddress } = useContext(SubContractContext);
 
   // const VISA_CONTRACT_ADDRESS = VisaAddress;
@@ -27,11 +31,13 @@ const Visa_Login = () => {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-
-    const _uuid = event.target.email.value;
-    const _password = event.target.password.value;
-
     try {
+    setIsLoading(true);
+
+    const _uuid = form.current.elements.email.value;
+    const _password = form.current.elements.password.value;
+
+    
       console.log("Initiating Ether.js...");
       // Initialize ethers by connecting to the network
       const provider = new ethers.JsonRpcProvider(process.env.REACT_APP_RPC_URL);
@@ -61,10 +67,13 @@ const Visa_Login = () => {
         // Store session ID locally
         sessionStorage.setItem('sessionId', sessionId);
         sessionStorage.setItem('uid', USER_CONTRACT_ADDRESS);
+        setIsLoading(false);
+        setIsSuccess(true);
         navigate("/visa");
       } else {
         console.error("Invalid credentials. Login failed.");
         setErrorMessage("Invalid credentials. Please try again.");
+        setIsLoading(false);
       }
       setTimeout(() => {
         setErrorMessage(null);
@@ -72,6 +81,7 @@ const Visa_Login = () => {
     } catch (error) {
       console.error("Error calling login function:", error);
       setErrorMessage("Invalid credentials. Please try again.");
+      setIsLoading(false);
       setTimeout(() => {
         setErrorMessage(null);
       }, 3000);
@@ -87,6 +97,24 @@ const Visa_Login = () => {
       return (c === 'x' ? r : (r & 0x3 | 0x8)).toString(16);
     });
     return uuid;
+  };
+
+  const handleButtonClick = (event) => {
+    event.preventDefault();
+
+    // Check if all required fields are filled
+    const email = form.current.elements.email.value;
+    const password = form.current.elements.password.value;
+
+    if (email && password) {
+      // All required fields are filled, proceed with form submission
+      if (!isLoading) {
+        handleSubmit(event);
+      }
+    } else {
+      // Display an error message or handle the empty fields case as needed
+      alert('Please fill in all required fields');
+    }
   };
 
   return (
@@ -137,7 +165,7 @@ const Visa_Login = () => {
                 {errorMessage}
               </div>
             )}
-            <form onSubmit={handleSubmit} className="font-kelly ml-10 mt-24 space-y-2">
+            <form ref={form}  className="font-kelly ml-10 mt-24 space-y-2">
               {/*Email */}
               <label htmlFor="email" className="text-3xl">
                 ID
@@ -182,13 +210,14 @@ const Visa_Login = () => {
 
               {/* Buttons */}
               <br />
-              <button type="submit" className="rounded-2xl bg-background h-12 w-96 border-4 border-blue-here hover:border-background hover:bg-opacity-40 hover:text-black">
+              {/* <button type="submit" className="rounded-2xl bg-background h-12 w-96 border-4 border-blue-here hover:border-background hover:bg-opacity-40 hover:text-black">
                 SUBMIT
               </button>
               <br />
               <button className="rounded w-96 hover:bg-background hover:text-white hover:w-40 hover:ml-28">
                 <Link to="/signup_visa">New user? Signup&gt;&gt;</Link>
-              </button>
+              </button> */}
+              <LoadingButton isLoading={isLoading} isSuccess={isSuccess} onClick={handleButtonClick} />
               <br />
             </form>
           </div>

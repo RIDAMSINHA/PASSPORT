@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useRef, useState } from "react";
 import "../styles/style.css"; 
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
@@ -6,10 +6,14 @@ import { ethers } from "ethers";
 import { SubContractContext } from './utilites/SubContractContext';
 import USER_CONTRACT_ABI from './Contract/pass.json';
 import GOV_CONTRACT_ABI from './Contract/gov.json';
+import LoadingButton from "./utilites/LoadingButton";
 
 const Login = () => {
+  const form = useRef();
   const navigate = useNavigate();
   const [errorMessage, setErrorMessage] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isSuccess, setIsSuccess] = useState(false);
   // const { subContractAddress } = useContext(SubContractContext);
 
   // const GOV_CONTRACT_ADDRESS = subContractAddress;
@@ -17,10 +21,12 @@ const Login = () => {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
+    try {
+    setIsLoading(true);
 
-    const _uuid = event.target.email.value;
-    const _password = event.target.password.value;
-    const _username = event.target.username.value;
+    const _uuid = form.current.elements.email.value;
+    const _password = form.current.elements.password.value;
+    const _username = form.current.elements.username.value;
 
     // Initialize ethers by connecting to the network
     const provider = new ethers.JsonRpcProvider(process.env.REACT_APP_RPC_URL);
@@ -36,7 +42,7 @@ const Login = () => {
     const user_abi = USER_CONTRACT_ABI.abi;
     const userContract = new ethers.Contract(USER_CONTRACT_ADDRESS,user_abi,signer);
 
-    try {
+    
       console.log("Attempting to log in with password:", _password, "username:", _username, "and pcd:", _uuid);
 
       const loginSuccessful = await userContract.login(_password, _uuid, _username);
@@ -44,10 +50,18 @@ const Login = () => {
 
       if (loginSuccessful) {
         console.log("Login successful!");
+        // Generate session ID
+        const sessionId = generateUUID();
+        // Store session ID locally
+        sessionStorage.setItem('us_sessionId', sessionId);
+        sessionStorage.setItem('us_uid', USER_CONTRACT_ADDRESS);
+        setIsLoading(false);
+        setIsSuccess(true);
         navigate("/user");
       } else {
         console.error("Invalid credentials. Login failed.");
         setErrorMessage("Invalid credentials. Please try again.");
+        setIsLoading(false);
       }
       setTimeout(() => {
         setErrorMessage(null);
@@ -55,11 +69,41 @@ const Login = () => {
     } catch (error) {
       console.error("Error calling login function:", error);
       setErrorMessage("Invalid credentials. Please try again.");
+      setIsLoading(false);
       setTimeout(() => {
         setErrorMessage(null);
       }, 3000);
     }
 
+  };
+
+  const generateUUID = () => {
+    let dt = new Date().getTime();
+    const uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+      const r = (dt + Math.random() * 16) % 16 | 0;
+      dt = Math.floor(dt / 16);
+      return (c === 'x' ? r : (r & 0x3 | 0x8)).toString(16);
+    });
+    return uuid;
+  };
+
+  const handleButtonClick = (event) => {
+    event.preventDefault();
+
+    // Check if all required fields are filled
+    const fullName = form.current.elements.username.value;
+    const email = form.current.elements.email.value;
+    const password = form.current.elements.password.value;
+
+    if (fullName && email && password) {
+      // All required fields are filled, proceed with form submission
+      if (!isLoading) {
+        handleSubmit(event);
+      }
+    } else {
+      // Display an error message or handle the empty fields case as needed
+      alert('Please fill in all required fields');
+    }
   };
 
   return (
@@ -105,6 +149,7 @@ const Login = () => {
               </div>
             )}
             <form
+              ref={form}
               onSubmit={handleSubmit}
               className="font-kelly ml-10 mt-16 space-y-2"
             >
@@ -151,15 +196,16 @@ const Login = () => {
               <br />
               {/* Buttons */}
               <br />
-              <button
+              {/* <button
                 type="submit"
                 className="rounded-2xl bg-background h-12 w-96 border-4 border-blue-here hover:border-background hover:bg-opacity-40 hover:text-black"
               >
                 SUBMIT
-              </button>
+              </button> */}
+              <LoadingButton isLoading={isLoading} isSuccess={isSuccess} onClick={handleButtonClick} />
               <br />
               <button className="rounded w-96 hover:bg-background hover:text-white hover:w-40 hover:ml-28">
-                <Link to="/details">New user? Signup&gt;&gt;</Link>
+                <Link to="/sign_up">New user? Signup&gt;&gt;</Link>
               </button>
               <br />
             </form>

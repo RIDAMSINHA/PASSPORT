@@ -14,6 +14,7 @@ const Signup_border = () => {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
+    try {
     setIsLoading(true);
     const formData = new FormData(form.current);
 
@@ -22,7 +23,7 @@ const Signup_border = () => {
     const _password = formData.get('password');
     const _email = formData.get('email');
 
-    try {
+    
       console.log('Initializing Ether.js...');
       const GOV_CONTRACT_ADDRESS = process.env.REACT_APP_CONTRACT_ADDRESS;
       const abi = GOV_CONTRACT_ABI.abi;

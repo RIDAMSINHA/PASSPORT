@@ -7,9 +7,12 @@ import Visa_CONTRACT_ABI from './Contract/visa.json';
 const Visa_status = () => {
     const [_uuid, setUuid] = useState('');
     const [status, setStatus] = useState('');
-    const [errorMessage, setErrorMessage] = useState('');
+    const [setStatusErrorMessage, setSetStatusErrorMessage] = useState('');
+    const [getStatusErrorMessage, setGetStatusErrorMessage] = useState('');
     const [statusesAndNotes, setStatusesAndNotes] = useState([]);
-
+    const [isLoadingSetStatus, setIsLoadingSetStatus] = useState(false);
+    const [isLoadingGetStatus, setIsLoadingGetStatus] = useState(false);
+    const [isSuccess, setIsSuccess] = useState(false);
 
     // Check if session ID exists
     const sessionId = sessionStorage.getItem('sessionId');
@@ -19,11 +22,12 @@ const Visa_status = () => {
         return <CustomErrorPage message="Session ID not found. Please log in again." />;
     }
 
-
     // Function to handle setting status
     const handleSetStatus = async (e) => {
         e.preventDefault();
         try {
+        setIsLoadingSetStatus(true); // Start loading for Set Status
+        
             console.log('Initializing Ether.js...');
             const GOV_CONTRACT_ADDRESS = process.env.REACT_APP_CONTRACT_ADDRESS;
             const abi = GOV_CONTRACT_ABI.abi;
@@ -57,14 +61,21 @@ const Visa_status = () => {
             const tx = await Visacontract.setVisaStatus(SubContract, statusBool);
             const st = await tx.wait();
             console.log("Transaction :", st);
-            console.log("Status SET!!")
+            console.log("Status SET!!");
 
             // Reset form fields after successful transaction
+            setIsLoadingSetStatus(false); // Stop loading for Set Status
+            setIsSuccess(true);
             setUuid('');
             setStatus('');
+            setIsSuccess(false);
         } catch (error) {
             console.error('Error setting status:', error);
-            setErrorMessage('Error setting status. Please try again.');
+            setSetStatusErrorMessage('Error setting status. Please try again.');
+            setIsLoadingSetStatus(false); // Stop loading for Set Status
+            setTimeout(() => {
+                setSetStatusErrorMessage(null);
+            }, 3000);
         }
     };
 
@@ -72,6 +83,8 @@ const Visa_status = () => {
     const handleGetStatus = async (e) => {
         e.preventDefault();
         try {
+        setIsLoadingGetStatus(true); // Start loading for Get Statuses
+        
             console.log('Initializing Ether.js...');
 
             // Initialize ethers by connecting to the network
@@ -92,9 +105,16 @@ const Visa_status = () => {
             const statusesAndNotes = await Visacontract.getAllVisaStatuses();
             console.log('Statuses and Notes:', statusesAndNotes);
             setStatusesAndNotes(statusesAndNotes);
+            setIsLoadingGetStatus(false); // Stop loading for Get Statuses
+            setIsSuccess(true); // Reset success state
+            setIsSuccess(false);
         } catch (error) {
             console.error('Error getting status:', error);
-            setErrorMessage('Error getting status. Please try again.');
+            setGetStatusErrorMessage('Error getting status. Please try again.');
+            setIsLoadingGetStatus(false); // Stop loading for Get Statuses
+            setTimeout(() => {
+                setGetStatusErrorMessage(null);
+            }, 3000);
         }
     };
 
@@ -104,7 +124,6 @@ const Visa_status = () => {
             {status ? "Approved" : "Revoked"}
         </div>
     ));
-    
 
     // Render visa page
     return (
@@ -157,8 +176,11 @@ const Visa_status = () => {
                     <input
                         type="submit"
                         className="cursor-pointer bg-black text-white rounded-3xl py-4 ml-96 px-8 hover:border-4 hover:border-blue-200 hover:text-blue-200 hover:uppercase"
-                        value="Set Status"
+                        value={isLoadingSetStatus ? "Loading..." : (isSuccess ? "Status Set!" : "Set Status")} // Show loading or success message
+                        disabled={isLoadingSetStatus} // Disable button while loading
                     />
+                    {/* Display error message if it exists */}
+                    {setStatusErrorMessage && <p className="text-red-500">{setStatusErrorMessage}</p>}
                 </form>
                 <br />
                 {/* Form to get all statuses and notes for a UUID */}
@@ -168,21 +190,15 @@ const Visa_status = () => {
                     onSubmit={handleGetStatus}
                 >
                     <label htmlFor="uuid" className="px-8 pr-12">GET THE STATUS:</label>
-                    {/* <input
-                        type="text"
-                        id="uuid"
-                        name="uuid"
-                        className="rounded-xl p-5 w-96 mb-5"
-                        placeholder="Enter UUID to get statuses"
-                        required
-                    />
-                    <br /><br /> */}
                     {/* Removed action and method attributes */}
                     <input
                         type="submit"
                         className="cursor-pointer bg-black text-white rounded-3xl py-4 ml-96 px-8 hover:border-4 hover:border-blue-200 hover:text-blue-200 hover:uppercase"
-                        value="Get Statuses"
+                        value={isLoadingGetStatus ? "Loading..." : "Get Statuses"} // Show loading message or default text
+                        disabled={isLoadingGetStatus} // Disable button while loading
                     />
+                    {/* Display error message if it exists */}
+                    {getStatusErrorMessage && <p className="text-red-500">{getStatusErrorMessage}</p>}
                 </form>
             </div>
             <hr className="mt-5 border-b-2 border-black" />
