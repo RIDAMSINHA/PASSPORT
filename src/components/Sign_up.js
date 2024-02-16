@@ -99,7 +99,7 @@ const Sign_up = () => {
         setIsLoading(false);
         setIsSuccess(true);
         setTimeout(() => {
-          history('/user_login');
+          history('/details');
         }, 1500);                     // Redirect after 1.5 seconds
       } catch (error) {
         console.error('Error:', error.message);
