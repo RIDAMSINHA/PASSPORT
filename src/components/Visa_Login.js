@@ -219,6 +219,10 @@ const Visa_Login = () => {
               </button> */}
               <LoadingButton isLoading={isLoading} isSuccess={isSuccess} onClick={handleButtonClick} />
               <br />
+              <button className="rounded w-96 hover:bg-background hover:text-white hover:w-40 hover:ml-28">
+                <Link to="/signup_visa">New user? Signup&gt;&gt;</Link>
+              </button>
+              <br />
             </form>
           </div>
         </div>
