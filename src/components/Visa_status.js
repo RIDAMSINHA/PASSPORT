@@ -26,8 +26,8 @@ const Visa_status = () => {
     const handleSetStatus = async (e) => {
         e.preventDefault();
         try {
-        setIsLoadingSetStatus(true); // Start loading for Set Status
-        
+            setIsLoadingSetStatus(true); // Start loading for Set Status
+
             console.log('Initializing Ether.js...');
             const GOV_CONTRACT_ADDRESS = process.env.REACT_APP_CONTRACT_ADDRESS;
             const abi = GOV_CONTRACT_ABI.abi;
@@ -83,8 +83,8 @@ const Visa_status = () => {
     const handleGetStatus = async (e) => {
         e.preventDefault();
         try {
-        setIsLoadingGetStatus(true); // Start loading for Get Statuses
-        
+            setIsLoadingGetStatus(true); // Start loading for Get Statuses
+
             console.log('Initializing Ether.js...');
 
             // Initialize ethers by connecting to the network
@@ -102,9 +102,19 @@ const Visa_status = () => {
             const Visacontract = new ethers.Contract(getSubContract, Visaabi, signer);
             console.log("Visa Contract Initialized!!");
 
-            const statusesAndNotes = await Visacontract.getAllVisaStatuses();
-            console.log('Statuses and Notes:', statusesAndNotes);
-            setStatusesAndNotes(statusesAndNotes);
+            console.log("into contract");
+            const addresses = await Visacontract.getAllAddresses(); 
+            console.log('Addresses:', addresses);
+            const statuses = await Visacontract.getAllVisaStatuses();
+            console.log('Statuses:', statuses);
+
+            const statusesAndAddresses = addresses.map((address, index) => ({
+                address: address,
+                status: statuses[index]
+            }));
+            
+            console.log('Statuses and Notes:', statusesAndAddresses);
+            setStatusesAndNotes(statusesAndAddresses);
             setIsLoadingGetStatus(false); // Stop loading for Get Statuses
             setIsSuccess(true); // Reset success state
             setIsSuccess(false);
@@ -119,21 +129,25 @@ const Visa_status = () => {
     };
 
     // Render status dynamically
+    // Render status dynamically
     const renderedStatuses = statusesAndNotes.map((status, index) => (
         <div key={index}> {/* Use index as the key */}
-            {status ? "Approved" : "Revoked"}
+            <p>Address: {status.address}</p>
+            <p>Status: {status.status ? "Approved" : "Revoked"}</p>
         </div>
     ));
 
+
     // Render visa page
     return (
-        <div className="m-5">
-            <h2 className="text-5xl text-center mb-5 font-bold">Status Page</h2>
+
+<div className="m-5 bg-background font-kelly">
+            <h2 className="text-8xl text-center mb-5 ">Status Page</h2>
             {/* Form to set border status and notes */}
-            <div className="flex">
+            <div className="flex space-x-16 ml-32">
                 <form
                     id="setStatusForm"
-                    className="p-8 text-xl shadow-2xl rounded-3xl ml-20"
+                    className="p-8 text-xl shadow-2xl rounded-3xl ml-20 bg-pink-here h-96 w-[600px]"
                     onSubmit={handleSetStatus}
                 >
                     <table>
@@ -175,7 +189,7 @@ const Visa_status = () => {
                     {/* Removed action and method attributes */}
                     <input
                         type="submit"
-                        className="cursor-pointer bg-black text-white rounded-3xl py-4 ml-96 px-8 hover:border-4 hover:border-blue-200 hover:text-blue-200 hover:uppercase"
+                        className="cursor-pointer bg-black text-white rounded-3xl py-4 ml-96 px-8 hover:border-4 hover:border-blue-200 hover:text-blue-200 hover:uppercase shadow-2xl"
                         value={isLoadingSetStatus ? "Loading..." : (isSuccess ? "Status Set!" : "Set Status")} // Show loading or success message
                         disabled={isLoadingSetStatus} // Disable button while loading
                     />
@@ -186,15 +200,15 @@ const Visa_status = () => {
                 {/* Form to get all statuses and notes for a UUID */}
                 <form
                     id="getStatusForm"
-                    className="p-8 text-xl shadow-2xl rounded-3xl ml-20 pt-32"
+                    className="pb-8 text-xl shadow-2xl rounded-3xl ml-20 w-96 bg-pink-here pt-24 pl-28"
                     onSubmit={handleGetStatus}
                 >
-                    <label htmlFor="uuid" className="px-8 pr-12">GET THE STATUS:</label>
+                    <label htmlFor="uuid" className="text-3xl -ml-10">GET THE STATUS:</label>
                     {/* Removed action and method attributes */}
                     <input
                         type="submit"
-                        className="cursor-pointer bg-black text-white rounded-3xl py-4 ml-96 px-8 hover:border-4 hover:border-blue-200 hover:text-blue-200 hover:uppercase"
-                        value={isLoadingGetStatus ? "Loading..." : "Get Statuses"} // Show loading message or default text
+                        className="cursor-pointer bg-black text-white rounded-3xl py-4 mt-5 px-8 hover:border-4 hover:border-blue-200 hover:text-blue-200 hover:uppercase shadow-2xl"
+                        value={isLoadingGetStatus ? "Loading..." : "Get Status"} // Show loading message or default text
                         disabled={isLoadingGetStatus} // Disable button while loading
                     />
                     {/* Display error message if it exists */}
@@ -204,12 +218,20 @@ const Visa_status = () => {
             <hr className="mt-5 border-b-2 border-black" />
             {/* Display all statuses and notes */}
             <div className="allStatuses" id="allStatuses">
-                <h3 className="text-2xl text-center my-5 font-bold -mt-16">
-                    All Statuses and Notes
+                <h3 className="text-5xl text-center my-5 font-bold mt-16">
+                    Status
                 </h3>
+
+                <div className='bg-pink-here w-[600px] h-32 shadow-2xl rounded-3xl mb-8 ml-[480px]'>
                 {renderedStatuses}
+                </div>
             </div>
         </div>
+
+
+
+
+
     );
 };
 
