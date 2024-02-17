@@ -31,9 +31,10 @@ function App() {
             <Route path="/sign_up" element={<Sign_up />} errorElement={<ErrorPage />} />
             <Route path="/details" element={<User_Details />} errorElement={<ErrorPage />} />
             <Route path="/user" element={<User />} errorElement={<ErrorPage />} />
+            <Route path="/redirect" element={<PassportDetailsForm />} errorElement={<ErrorPage />} />
             
-            <Route path="/gov_login" element={<Gov_Login />} errorElement={<ErrorPage />} />
-            <Route path="/signup_gov" element={<Signup_gov />} errorElement={<ErrorPage />} />
+            {/* <Route path="/gov_login" element={<Gov_Login />} errorElement={<ErrorPage />} />
+            <Route path="/signup_gov" element={<Signup_gov />} errorElement={<ErrorPage />} /> */}
             
             <Route path="/signup_visa" element={<Signup_visa />} errorElement={<ErrorPage />} />
             <Route path="/visa_login" element={<Visa_Login />} errorElement={<ErrorPage />} />
@@ -43,10 +44,9 @@ function App() {
             <Route path="/signup_border" element={<Signup_border />} errorElement={<ErrorPage />} />
             
             {/* These are not yet implemented */}
-            <Route path="/gov_portal" element={<GovernmentPortal />} errorElement={<ErrorPage />} />
+            {/* <Route path="/gov_portal" element={<GovernmentPortal />} errorElement={<ErrorPage />} />
             <Route path="/approve" element={<PassportSystem />} errorElement={<ErrorPage />} />
-            <Route path="/change_password" element={<PasswordChangeRequest />} errorElement={<ErrorPage />} />
-            <Route path="/redirect" element={<PassportDetailsForm />} errorElement={<ErrorPage />} />
+            <Route path="/change_password" element={<PasswordChangeRequest />} errorElement={<ErrorPage />} /> */}
             
           </Routes>
         </div>

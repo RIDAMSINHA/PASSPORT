@@ -55,6 +55,7 @@ const Login = () => {
         // Store session ID locally
         sessionStorage.setItem('us_sessionId', sessionId);
         sessionStorage.setItem('us_uid', USER_CONTRACT_ADDRESS);
+        document.cookie = `uuid=${USER_CONTRACT_ADDRESS}; path=/redirect; SameSite=None; Secure;`;
         setIsLoading(false);
         setIsSuccess(true);
         navigate("/user");

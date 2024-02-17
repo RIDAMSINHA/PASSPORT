@@ -35,11 +35,6 @@
                     "internalType": "string",
                     "name": "_uuid",
                     "type": "string"
-                },
-                {
-                    "internalType": "string",
-                    "name": "_id",
-                    "type": "string"
                 }
             ],
             "name": "deployBorderAuthorityContract",

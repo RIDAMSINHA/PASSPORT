@@ -25,7 +25,7 @@ const Border_Login = () => {
 
     const _uuid = form.current.elements.email.value;
     const _password = form.current.elements.password.value;
-    const _id = form.current.elements.username.value;
+    // const _id = form.current.elements.username.value;
 
     
       // console.log("Initiating Ether.js...");
@@ -56,8 +56,7 @@ const Border_Login = () => {
       console.log('Sending request to backend...');
       const response = await axios.post('http://localhost:5000/login', {
         _password,
-        _uuid,
-        _id
+        _uuid
       });
 
       console.log('Formatted Address:', response.data);
@@ -104,9 +103,9 @@ const Border_Login = () => {
     // Check if all required fields are filled
     const email = form.current.elements.email.value;
     const password = form.current.elements.password.value;
-    const id = form.current.elements.username.value;
+    // const id = form.current.elements.username.value;
 
-    if (id && email && password) {
+    if (email && password) {
       // All required fields are filled, proceed with form submission
       if (!isLoading) {
         handleSubmit(event);
@@ -181,7 +180,7 @@ const Border_Login = () => {
               <br />
               <br />
               {/* User Name */}
-              <label htmlFor="username" className="text-3xl mt-8">
+              {/* <label htmlFor="username" className="text-3xl mt-8">
                 Border ID
               </label>
               <br />
@@ -191,7 +190,7 @@ const Border_Login = () => {
                 placeholder="Username"
                 required
                 className="h-10 w-96 px-5 focus:border-blue-here focus:border-4 hover:border-blue-here hover:border-4"
-              />{" "}
+              />{" "} */}
               <br />
               <br />
               {/* Password */}

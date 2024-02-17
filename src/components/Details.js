@@ -22,7 +22,7 @@ const User_Details = () => {
     userNationality: "",
     userAddress: "",
     userPincode: "",
-    Email: "",
+    // Email: "",
     Aadhar: "",
   });
 
@@ -43,6 +43,21 @@ const User_Details = () => {
     };
     init();
   }, []);
+
+  const getCookie = (name) => {
+    const cookieString = document.cookie;
+    const cookies = cookieString.split(';');
+    for (let cookie of cookies) {
+      const [cookieName, cookieValue] = cookie.split('=');
+      if (cookieName === name) {
+        return cookieValue;
+      }
+    }
+    return null;
+  };
+
+  const USER_CONTRACT_ADDRESS = getCookie("Sub_add");
+  console.log(USER_CONTRACT_ADDRESS);
 
   const sendFileToIPFS = async (e) => {
     e.preventDefault();
@@ -81,6 +96,7 @@ const User_Details = () => {
     console.log("In the storeIpfsHashInContract function");
     // Replace with the user's actual details
     const transaction = await userDetailsContract.setUserDetails(
+      USER_CONTRACT_ADDRESS,
       contractInfo.userName,
       contractInfo.userAge,
       contractInfo.userDateOfBirth,
@@ -90,7 +106,7 @@ const User_Details = () => {
       contractInfo.userAddress,
       contractInfo.userPincode,
       contractInfo.Aadhar,
-      contractInfo.Email,
+      // contractInfo.Email,
       ipfsHash
     );
     await transaction.wait();
@@ -123,10 +139,10 @@ const User_Details = () => {
     const userGender = form.current.elements.userGender.value;
     const userNationality = form.current.elements.userNationality.value;
     const userAddress = form.current.elements.userAddress.value;
-    const Email = form.current.elements.Email.value;
+    // const Email = form.current.elements.Email.value;
     const Aadhar = form.current.elements.Aadhar.value;
 
-    if ( userName && userAge && userDateOfBirth && userFatherName && userGender && userNationality && userAddress && Email && Aadhar) {
+    if ( userName && userAge && userDateOfBirth && userFatherName && userGender && userNationality && userAddress && Aadhar) {
       // All required fields are filled, proceed with form submission
       if (!isLoading) {
         sendFileToIPFS(event);
@@ -316,7 +332,7 @@ const User_Details = () => {
                     />
                   </td>
                 </tr>
-                <tr className="flex pl-8 p-2">
+                {/* <tr className="flex pl-8 p-2">
                   <td className="w-60">Email:</td>{" "}
                   <td>
                     <input
@@ -329,7 +345,7 @@ const User_Details = () => {
                       required
                     />
                   </td>
-                </tr>
+                </tr> */}
                 <tr className="flex pl-8 p-2">
                   <td className="w-60">Aadhar no.:</td>{" "}
                   <td>
