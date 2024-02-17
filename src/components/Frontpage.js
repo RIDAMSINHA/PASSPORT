@@ -1,8 +1,29 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import '../styles/style.css';
 import { Link } from 'react-router-dom';
 
 const PassportLogin = () => {
+  // const [weather, setWeather] = useState(null);
+
+  // useEffect(() => {
+  //   // Function to fetch weather data
+  //   const fetchWeather = async () => {
+  //     try {
+  //       // Replace 'YOUR_API_KEY' with your OpenWeatherMap API key
+  //       const apiKey = process.env.WEATHER_API_KEY;
+  //       const response = await fetch(`https://dataservice.accuweather.com/currentconditions/v1/YOUR_LOCATION_KEY?apikey=${apiKey}`);
+  //       const data = await response.json();
+  //       console.log(data);
+  //       setWeather(data);
+  //     } catch (error) {
+  //       console.error('Error fetching weather data:', error);
+  //     }
+  //   };
+
+  //   // Call fetchWeather function when component mounts
+  //   fetchWeather();
+  // }, []);
+
   return (
     <html lang="en">
       <head>
@@ -42,33 +63,124 @@ const PassportLogin = () => {
           <img src="../images/Passport.png" alt="LOGO" className="h-14 mt-5 mx-8" />
         </div>
 
-        <div className="flex ml-96 mt-28 space-x-40">
+        {/* <div className="flex ml-96 mt-28 space-x-40">
           <div>
             <a href="/user_login">
-              <button className="bg-pink-here h-60 w-72 rounded-3xl border-4 border-white-here font-kelly text-4xl hover:border-4 hover:border-blue-here hover:text-5xl">User <br/>Login
+              <button className="bg-pink-here h-60 w-72 rounded-3xl border-4 border-white-here font-kelly text-4xl hover:border-4 hover:border-blue-here hover:text-5xl">User <br />Login
               </button>
-            </a> 
-            <br/><br/>
-            <Link to ="/visa_login">
-            <a href="#">
-              <button className="bg-pink-here h-60 w-72 rounded-3xl border-4 border-white-here font-kelly text-4xl hover:border-4 hover:border-blue-here hover:text-5xl">Visa Authority <br/>Login
-              </button>
-            </a> 
+            </a>
+            <br /><br />
+            <Link to="/visa_login">
+              <a href="#">
+                <button className="bg-pink-here h-60 w-72 rounded-3xl border-4 border-white-here font-kelly text-4xl hover:border-4 hover:border-blue-here hover:text-5xl">Visa Authority <br />Login
+                </button>
+              </a>
             </Link>
           </div>
           <div>
             <Link to="http://localhost:5000/">
               <button className="bg-pink-here h-60 w-72 rounded-3xl border-4 border-white-here font-kelly text-4xl hover:border-4 hover:border-blue-here hover:text-5xl">Government Login
               </button>
-            </Link>  <br/><br/>
+            </Link>  <br /><br />
             <Link to="/border_login">
-            <a href="#">
-              <button className="bg-pink-here h-60 w-72 rounded-3xl border-4 border-white-here font-kelly text-4xl hover:border-4 hover:border-blue-here hover:text-5xl">Border Authority Login
-              </button>
-            </a> 
+              <a href="#">
+                <button className="bg-pink-here h-60 w-72 rounded-3xl border-4 border-white-here font-kelly text-4xl hover:border-4 hover:border-blue-here hover:text-5xl">Border Authority Login
+                </button>
+              </a>
             </Link>
           </div>
+        </div> */}
+        <div ><h1 className='h-24 mt-4 text-8xl font-kelly text-center '>PORTAL</h1></div>
+
+        <div className="bg-background">
+          <div className="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:py-16 lg:px-8 lg:flex lg:items-center lg:justify-between">
+            <div className="flex flex-col items-center space-y-6 lg:flex-row lg:space-x-8 lg:space-y-0">
+
+
+              {/* user login */}
+
+              <div className="ml-14 bg-gray-100 p-6 rounded-lg h-80 shadow-lg w-64">
+                <img src="../images/Passport.png" alt="LOGO" id="hello" className="h-14 mt-5 mr-20" />
+                <h2 className="mt-4 text-center text-lg font-semibold text-gray-900">User</h2>
+                <p className="mt-2 text-sm text-gray-600 text-center">
+                  Login with your User ID , Username and Password to access your Passport Services and Account.
+                </p>
+                <Link to="/user_login">
+                  <button className="mt-4 w-full bg-pink-here h-12 rounded-3xl border-4 border-white-here font-kelly text-lg hover:border-blue-here hover:text-xl">
+                    Login
+                  </button>
+                </Link>
+              </div>
+
+              {/* Government Login */}
+              <div className="bg-gray-100 h-80 p-6 rounded-lg shadow-lg w-64">
+                <img src="../images/Passport.png" alt="LOGO" id="hello" className="h-14 mt-5 mr-8" />
+                <h2 className="mt-4 text-center text-lg font-semibold text-gray-900">Government</h2>
+                <p className="mt-2 text-sm text-gray-600 text-center">
+                Login with your Government ID and Password to access your Government Services and <br/>Account.
+                </p>
+                <Link to="http://localhost:5000/">
+                  <button className="mt-4 w-full bg-pink-here h-12 rounded-3xl border-4 border-white-here font-kelly text-lg hover:border-blue-here hover:text-xl">
+                    Login
+                  </button>
+                </Link>
+              </div>
+
+              {/* Visa Authority */}
+              <div className="bg-gray-100 h-80 p-6 rounded-lg shadow-lg w-64">
+                <img src="../images/Passport.png" alt="LOGO" id="hello" className="h-14 mt-5 mr-8" />
+                <h2 className="mt-4 text-center text-lg font-semibold text-gray-900">Visa Authority</h2>
+                <p className="mt-2 text-sm text-gray-600 text-center">
+                Login with your Visa Authority ID and Password to access your Visa Services and <br/>Account.
+                </p>
+                <Link to="/visa_login">
+                  <button className="mt-4 w-full bg-pink-here h-12 rounded-3xl border-4 border-white-here font-kelly text-lg hover:border-blue-here hover:text-xl">
+                    Login
+                  </button>
+                </Link>
+              </div>
+
+              {/* Border Authority */}
+              <div className="bg-gray-100 h-80 p-6 rounded-lg shadow-lg w-64">
+                <img id="hello" src="../images/Passport.png" alt="LOGO" className="h-14 mt-5 mx-8" />
+                <h2 className="mt-4 text-center text-lg font-semibold text-gray-900">Border Authority</h2>
+                <p className="mt-2 text-sm text-gray-600 text-center">
+                Login with your Border Authority ID and Password to access your Border Services and <br/>Account.
+                </p>
+                <Link to="/border_login">
+                  <button className="mt-4 w-full bg-pink-here h-12 rounded-3xl border-4 border-white-here font-kelly text-lg hover:border-blue-here hover:text-xl">
+                    Login
+                  </button>
+                </Link>
+              </div>
+            </div>
+          </div>
+
+
+          {/* Weather display */}
+        {/* <div className="bg-white shadow-2xl">
+          <div className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center">
+                <SunSnowIcon className="h-6 w-6 text-white" />
+                <div className="ml-3 text-black">
+                  <p className="text-sm font-medium">Current Weather</p>
+                  {weather && weather.main && (
+                    <>
+                      <p className="text-xl font-bold">{weather.main.temp}°C</p>
+                      <p className="text-sm">{weather.weather[0].description}</p>
+                    </>
+                  )}
+                  {!weather && <p className="text-xl font-bold">Loading...</p>}
+                </div>
+              </div>
+              <div className="hidden md:flex items-center space-x-8" />
+            </div>
+          </div>
+        </div> */}
         </div>
+
+
       </body>
     </html>
   );

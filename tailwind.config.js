@@ -15,7 +15,7 @@ module.exports = {
     },
     fontFamily: {
       kons: ['Koh Santepheap', 'sans-serif'],
-      kelly:['Kelly Slab', 'sans-serif'],
+      kelly:['Kelly Slab'],
       alg:['Alegreya', 'serif'],
     },
   },
