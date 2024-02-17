@@ -17,6 +17,7 @@ import Visa_Login from './components/Visa_Login';
 import Gov_Login from './components/Gov_Login';
 import Signup_gov from './components/Signup_gov';
 import Visa_status from './components/Visa_status';
+import Password from './components/Password';
 
 
 function App() {
@@ -46,7 +47,8 @@ function App() {
             {/* These are not yet implemented */}
             {/* <Route path="/gov_portal" element={<GovernmentPortal />} errorElement={<ErrorPage />} />
             <Route path="/approve" element={<PassportSystem />} errorElement={<ErrorPage />} />
-            <Route path="/change_password" element={<PasswordChangeRequest />} errorElement={<ErrorPage />} /> */}
+            <Route path="/change_password" element={<PasswordChangeRequest />} errorElement={<ErrorPage />} />
+            <Route path="/password" element={<Password />} errorElement={<ErrorPage />} /> */}
             
           </Routes>
         </div>

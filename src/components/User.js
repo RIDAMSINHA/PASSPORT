@@ -231,13 +231,13 @@ const User = () => {
                   <tr className="h-20 text-2xl">
                     <td>
                       <select
-                        className="p-5 mb-5 w-48 bg-pink-here rounded-3xl h-14 text-3xl font-kelly pt-2 pb-0 pl-8 pr-0 flex space-x-5 "
+                        className="p-5 mb-5 w-48 bg-pink-here text-center rounded-3xl h-14 text-3xl font-kelly pt-2 pb-0 flex space-x-5 "
                         value={selectedOption}
                         onChange={handleChange}
                         required
                       >
                         <option value="">Request</option>
-                        <option value="/change_password">Change Password</option>
+                        <option value="/redirect">Change Password</option>
                         <option value="/approve">Change Information</option>
                       </select>
                     </td>
@@ -248,7 +248,7 @@ const User = () => {
                   <tr className="h-20 text-2xl">
                     <td>
                       <select
-                        className="p-5 mb-5 w-48 bg-pink-here rounded-3xl h-14 text-3xl font-kelly pt-2 pb-0 pl-8 pr-0 flex space-x-5"
+                        className="p-5 mb-5 w-48 bg-pink-here text-center rounded-3xl h-14 text-3xl font-kelly pt-2 pb-0 flex space-x-5"
                         value={selectedOption}
                         onChange={handleChange}
                         required
@@ -262,10 +262,10 @@ const User = () => {
                 </table>
 
                 <li
-                  className="p-5 mb-5 w-48 bg-pink-here rounded-3xl h-14 text-3xl font-kelly pt-2 pb-0 pl-8 pr-0 flex space-x-5 "
+                  className="p-5 mb-5 w-48 bg-pink-here rounded-3xl h-14 text-3xl font-kelly pt-2 pb-0 text-center flex space-x-5 "
                   required
                 >
-                  <a href="https://indianvisaonline.gov.in/visa/instruction.html">
+                  <a className="ml-10 mt-[6px]" href="https://indianvisaonline.gov.in/visa/instruction.html">
                   Rules
                   </a>
                 </li>
@@ -370,6 +370,7 @@ const User = () => {
                 value={fromPlace}
                 onChange={handleFromPlaceChange}
                 disabled={isSubmitted}
+                className="bg-transparent focus:outline-gray-200 text-center"
               />
             </td>
             <td className="border-2 p-5 text-center w-56 border-black">
@@ -378,10 +379,11 @@ const User = () => {
                 value={toPlace}
                 onChange={handleToPlaceChange}
                 disabled={isSubmitted}
+                className="bg-transparent focus:outline-gray-200 text-center"
               />
             </td>
             <td className="border-2 text-center w-56 border-black">
-              <button type="submit">Submit</button>
+              <button type="submit" className="border-4 border-black text-5xl text-bold rounded-full w-14 h-14" >+</button>
             </td>
             <td className="border-2 p-5 text-center w-56 border-black">
               {statusInfo.Status}
@@ -395,7 +397,7 @@ const User = () => {
                 <tr className="h-16 p-2">
                   <td className="border-2 p-5 text-center border-black"></td>
                   <td className="border-2 text-center border-black"></td>
-                  <td className="border-2 text-center border-black"></td>
+                  <td className="border-2 text-center border-black"><button type="submit" className="border-4 border-black text-5xl text-bold rounded-full w-14 h-14" >+</button></td>
                   <td className="border-2 text-center border-black"></td>
                   <td className="border-2 text-center border-black"></td>
                 </tr>
@@ -404,7 +406,7 @@ const User = () => {
                 <tr className="h-16 p-2">
                   <td className="border-2 text-center border-black p-5"></td>
                   <td className="border-2 text-center border-black"></td>
-                  <td className="border-2 text-center border-black"></td>
+                  <td className="border-2 text-center border-black"><button type="submit" className="border-4 border-black text-5xl text-bold rounded-full w-14 h-14" >+</button></td>
                   <td className="border-2 text-center border-black"></td>
                   <td className="border-2 text-center border-black"></td>
                 </tr>
@@ -413,7 +415,7 @@ const User = () => {
                 <tr className="h-16 p-2">
                   <td className="border-2 text-center border-black p-5"></td>
                   <td className="border-2 text-center border-black"></td>
-                  <td className="border-2 text-center border-black"></td>
+                  <td className="border-2 text-center border-black"><button type="submit" className="border-4 border-black text-5xl text-bold rounded-full w-14 h-14" >+</button></td>
                   <td className="border-2 text-center border-black"></td>
                   <td className="border-2 text-center border-black"></td>
                 </tr>
@@ -423,7 +425,7 @@ const User = () => {
                 <tr className="h-16 p-2">
                   <td className="border-2 text-center border-black p-5"></td>
                   <td className="border-2 text-center border-black"></td>
-                  <td className="border-2 text-center border-black"></td>
+                  <td className="border-2 text-center border-black"><button type="submit" className="border-4 border-black text-5xl text-bold rounded-full w-14 h-14" >+</button></td>
                   <td className="border-2 text-center border-black"></td>
                   <td className="border-2 text-center border-black"></td>
                 </tr>
@@ -433,7 +435,7 @@ const User = () => {
                 <tr className="h-16 p-2">
                   <td className="border-2 text-center border-black p-5"></td>
                   <td className="border-2 text-center border-black"></td>
-                  <td className="border-2 text-center border-black"></td>
+                  <td className="border-2 text-center border-black"><button type="submit" className="border-4 border-black text-5xl text-bold rounded-full w-14 h-14" >+</button></td>
                   <td className="border-2 text-center border-black"></td>
                   <td className="border-2 text-center border-black"></td>
                 </tr>
@@ -443,7 +445,7 @@ const User = () => {
                 <tr className="h-16 p-2">
                   <td className="border-2 text-center border-black p-5"></td>
                   <td className="border-2 text-center border-black"></td>
-                  <td className="border-2 text-center border-black"></td>
+                  <td className="border-2 text-center border-black"><button type="submit" className="border-4 border-black text-5xl text-bold rounded-full w-14 h-14" >+</button></td>
                   <td className="border-2 text-center border-black"></td>
                   <td className="border-2 text-center border-black"></td>
                 </tr>
@@ -453,7 +455,7 @@ const User = () => {
                 <tr className="h-16 p-2">
                   <td className="border-2 text-center border-black p-5"></td>
                   <td className="border-2 text-center border-black"></td>
-                  <td className="border-2 text-center border-black"></td>
+                  <td className="border-2 text-center border-black"><button type="submit" className="border-4 border-black text-5xl text-bold rounded-full w-14 h-14" >+</button></td>
                   <td className="border-2 text-center border-black"></td>
                   <td className="border-2 text-center border-black"></td>
                 </tr>

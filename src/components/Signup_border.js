@@ -187,8 +187,7 @@ const Signup_border = () => {
                 required
                 className="h-10 w-96 px-5 focus:border-blue-here focus:border-4 hover:border-blue-here hover:border-4"
               />{' '} */}
-              <br />
-              <br />
+              
 
               {/* Mobile Number */}
               <label htmlFor="aadhar" className="text-3xl mt-8">
