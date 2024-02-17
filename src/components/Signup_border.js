@@ -19,7 +19,7 @@ const Signup_border = () => {
     const formData = new FormData(form.current);
 
     const _rname = formData.get('fullname');
-    const _id = formData.get('address');
+    // const _id = formData.get('address');
     const _password = formData.get('password');
     const _email = formData.get('email');
 
@@ -35,12 +35,12 @@ const Signup_border = () => {
       const signer = wallet.connect(provider);
       console.log("Ether.js initialized!!");
 
-      console.log('Form values:', _rname, _id, _password, _email);
+      console.log('Form values:', _rname, _password, _email);
       // Send form data to the backend
       const response = await axios.post('http://localhost:5000/submit_form', {
         _password,
-        _email,
-        _id
+        _email
+        // _id
       });
 
       console.log('Formatted Receipt:', response.data);
@@ -85,12 +85,12 @@ const Signup_border = () => {
     // Check if all required fields are filled
     const _rname = form.current.elements.fullname.value;
     const _email = form.current.elements.email.value;
-    const _id = form.current.elements.address.value;
+    // const _id = form.current.elements.address.value;
     const _mobile = form.current.elements.aadhar.value;
     const _password = form.current.elements.password.value;
     
 
-    if (_rname && _email && _id && _mobile && _password ) {
+    if (_rname && _email && _mobile && _password ) {
       // All required fields are filled, proceed with form submission
       if (!isLoading) {
         handleSubmit(event);
@@ -176,7 +176,7 @@ const Signup_border = () => {
               <br />
 
               {/* Govt ID */}
-              <label htmlFor="address" className="text-3xl mt-8">
+              {/* <label htmlFor="address" className="text-3xl mt-8">
                 Border ID
               </label>
               <br />
@@ -186,7 +186,7 @@ const Signup_border = () => {
                 placeholder="XXXXXXXXXX"
                 required
                 className="h-10 w-96 px-5 focus:border-blue-here focus:border-4 hover:border-blue-here hover:border-4"
-              />{' '}
+              />{' '} */}
               <br />
               <br />
 

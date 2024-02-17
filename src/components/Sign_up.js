@@ -91,10 +91,10 @@ const Sign_up = () => {
         console.log('Subcontract Gov_ successfully deployed.', receipt);
 
         // Getting subcontract addr.
-        // const getSubContract = await Gov_Contract.getSubContractDetails(_uuid);
+        const getSubContract = await Gov_Contract.getSubContractDetails(_uuid);
         // setSubContractAddress(getSubContract);
         // console.log('Subcontract address:', getSubContract);
-        // document.cookie = `address=${getSubContract}; path=/user_login`;
+        document.cookie = `Sub_add=${getSubContract}; path=/details`;
         
         setIsLoading(false);
         setIsSuccess(true);
