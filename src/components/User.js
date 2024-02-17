@@ -3,11 +3,11 @@ import { ethers } from 'ethers';
 import "../styles/style.css";
 import { Link } from "react-router-dom";
 import DETAIL_CONTRACT_ABI from './Contract/detail.json';
-import SUB_CONTRACT_ABI from './Contract/pass.json';
 import CustomErrorPage from './utilites/CustomErrorPage';
 
 const User = () => {
-  const [visa_status, set_visa_status] = useState('');
+  const [visa_status, set_visa_status] = useState(null);
+  const [selectedOption, setSelectedOption] = useState('');
   const [contractInfo, setContractInfo] = useState({
     Name: "",
     Age: "",
@@ -17,12 +17,98 @@ const User = () => {
     Nationality: "",
     Address: "",
     Pincode: "",
-    Email: "",
+    // Email: "",
     Aadhar: "",
     Image: "../images/userimg.png",
   });
+    // State variables to hold the entered values
+    const [fromPlace, setFromPlace] = useState("");
+    const [toPlace, setToPlace] = useState("");
+    const [isSubmitted, setIsSubmitted] = useState(false);
+
+    // Function to get the value of a cookie by its name
+  const getCookie = (name) => {
+    const cookieString = document.cookie;
+    const cookies = cookieString.split(';');
+    for (let cookie of cookies) {
+      const [cookieName, cookieValue] = cookie.split('=');
+      if (cookieName.trim() === name) {
+        return cookieValue;
+      }
+    }
+    return null;
+  };
+
+  
+    // Event handlers to update the state with entered values
+    const handleFromPlaceChange = (e) => {
+      setFromPlace(e.target.value);
+      sessionStorage.setItem("fromPlace", e.target.value);
+    };
+  
+    const handleToPlaceChange = (e) => {
+      setToPlace(e.target.value);
+      sessionStorage.setItem("toPlace", e.target.value);
+    };
+
   const [imgUrl, setImgUrl] = useState(null);
   const [sessionIdExists, setSessionIdExists] = useState(false);
+
+  const handleChange = (event) => {
+    const selectedValue = event.target.value;
+    setSelectedOption(selectedValue);
+    if 
+    (
+      selectedValue === "https://indianvisaonline.gov.in/" || 
+      selectedValue === "/redirect"                        || 
+      selectedValue === "/change_password"                 || 
+      selectedValue === "/approve"
+    ) {
+      window.location.href = selectedValue;
+    }
+  };
+
+  const handleStatus = (e) => {
+    e.preventDefault();
+    setIsSubmitted(true);
+    console.log("From Place:", fromPlace);
+    console.log("To Place:", toPlace);
+  };
+
+  const [statusInfo, setstatusInfo] = useState({
+    Status: "",
+    Note: "",
+
+  });
+
+  const Status_Info = async () => {
+
+    console.log("Status Info");
+  const statusesCookie = getCookie("statuses");
+  const notesCookie = getCookie("notes");
+
+  console.log("Statuses Cookie:", statusesCookie);
+  if (statusesCookie && notesCookie) {
+    setstatusInfo({
+      Status: statusesCookie,
+      Note: notesCookie
+    });
+  } else {
+    console.log("Statuses or notes cookie not found.");
+  }
+  };
+
+  useEffect(() => {
+    const storedFromPlace = sessionStorage.getItem("fromPlace");
+    const storedToPlace = sessionStorage.getItem("toPlace");
+    if (storedFromPlace) {
+      setFromPlace(storedFromPlace);
+    }
+    if (storedToPlace) {
+      setToPlace(storedToPlace);
+    }
+    Status_Info();
+  }, []);
 
   useEffect(() => {
     // Check if session ID exists
@@ -46,10 +132,10 @@ const User = () => {
       const userDetailsContractAbi = DETAIL_CONTRACT_ABI.abi;
 
       const userDetailsContract = new ethers.Contract(userDetailsContractAddress, userDetailsContractAbi, signer);
+      const getSubContract = sessionStorage.getItem('us_uid');
+      const userDetails = await userDetailsContract.getUserDetails(getSubContract);
 
-      const userDetails = await userDetailsContract.getUserDetails();
-
-      const imageUrl = `https://ipfs.io/ipfs/${userDetails.ipfsHash}`; // Construct the image URL
+      const imageUrl = `https://ipfs.io/ipfs/${userDetails.ipfsHash}`;  // Construct the image URL
 
       setContractInfo({
         Name: userDetails.name,
@@ -60,7 +146,7 @@ const User = () => {
         Nationality: userDetails.nationality,
         Address: userDetails.userAddress,
         Pincode: userDetails.pincode.toString(),
-        Email: userDetails.email,
+        // Email: userDetails.email,
         Aadhar: userDetails.aadhar,
         Image: imageUrl,
       });
@@ -140,64 +226,48 @@ const User = () => {
                 className="h-14 mt-5 mx-8 mb-5"
               />
               <ul className="flex mt-5 space-x-20">
-                <li className="bg-pink-here rounded-3xl w-36 h-12 text-2xl font-kelly pt-2 pl-8 flex space-x-5">
-                  Visa
-                  <button type="button" id="arrowx1">
-                    <img className="h-4 -mt-2" src="../images/arrow.png" />
-                  </button>
-                </li>
 
-                <div
-                  id="arrow1"
-                  className="absolute hidden origin-top-right mt-16 w-48 shadow-lg bg-pink-here ring-1 ring-black ring-opacity-5 focus:outline-none font-kons text-xl"
+                <table>
+                  <tr className="h-20 text-2xl">
+                    <td>
+                      <select
+                        className="p-5 mb-5 w-48 bg-pink-here rounded-3xl h-14 text-3xl font-kelly pt-2 pb-0 pl-8 pr-0 flex space-x-5 "
+                        value={selectedOption}
+                        onChange={handleChange}
+                        required
+                      >
+                        <option value="">Request</option>
+                        <option value="/change_password">Change Password</option>
+                        <option value="/approve">Change Information</option>
+                      </select>
+                    </td>
+                  </tr>
+                </table>
+
+                <table>
+                  <tr className="h-20 text-2xl">
+                    <td>
+                      <select
+                        className="p-5 mb-5 w-48 bg-pink-here rounded-3xl h-14 text-3xl font-kelly pt-2 pb-0 pl-8 pr-0 flex space-x-5"
+                        value={selectedOption}
+                        onChange={handleChange}
+                        required
+                      >
+                        <option value="">Visa</option>
+                        <option value="https://indianvisaonline.gov.in/">Apply For Visa</option>
+                        <option value="/redirect">Check Status</option>
+                      </select>
+                    </td>
+                  </tr>
+                </table>
+
+                <li
+                  className="p-5 mb-5 w-48 bg-pink-here rounded-3xl h-14 text-3xl font-kelly pt-2 pb-0 pl-8 pr-0 flex space-x-5 "
+                  required
                 >
-                  <div className="py-1 border-2 border-black">
-                    <a
-                      href="#"
-                      className="block px-4 py-2 text-sm bg-pink-here text-black bottom-3 hover:bg-background"
-                    >
-                      APPLY FOR VISA
-                    </a>
-                    <hr className="border-b-2 border-black" />
-                    <a
-                      href="#"
-                      className="block px-4 py-2 text-sm text-black hover:bg-background"
-                    >
-                      CHECK STATUS
-                    </a>
-                  </div>
-                </div>
-
-                <li className="bg-pink-here rounded-3xl w-36 h-12 text-2xl font-kelly pt-2 pl-8 flex space-x-5">
-                  Request
-                  <button type="button" id="arrowx2">
-                    <img className="h-4 -mt-2" src="../images/arrow.png" />
-                  </button>
-                </li>
-
-                <div
-                  id="arrow2"
-                  className="absolute hidden left-500 origin-top-right mt-16 w-48 shadow-lg bg-pink-here ring-1 ring-black ring-opacity-5 focus:outline-none font-kons text-xl"
-                >
-                  <div className="py-1 border-2 border-black">
-                    <a
-                      href="#"
-                      className="block px-4 py-2 text-sm bg-pink-here text-black bottom-3 hover:bg-background"
-                    >
-                      Change Password
-                    </a>
-                    <hr className="border-b-2 border-black" />
-                    <a
-                      href="#"
-                      className="block px-4 py-2 text-sm text-black hover:bg-background"
-                    >
-                      Change Information
-                    </a>
-                  </div>
-                </div>
-
-                <li className="bg-pink-here rounded-3xl w-36 h-12 text-2xl font-kelly pt-2 text-center">
+                  <a href="https://indianvisaonline.gov.in/visa/instruction.html">
                   Rules
+                  </a>
                 </li>
               </ul>
 
@@ -206,7 +276,7 @@ const User = () => {
                   <img
                     src="../images/sign-out.png"
                     alt="LOGO"
-                    className="h-12 mt-5 mx-8"
+                    className="h-12"
                   />
                 </Link>
               </button>
@@ -248,9 +318,9 @@ const User = () => {
                 <tr className="flex pl-8 p-2">
                   <td className="w-60">Pincode:</td> <td>{contractInfo.Pincode}</td>
                 </tr>
-                <tr className="flex pl-8 p-2">
+                {/* <tr className="flex pl-8 p-2">
                   <td className="w-60">Email:</td> <td>{contractInfo.Email}</td>
-                </tr>
+                </tr> */}
                 <tr className="flex pl-8 p-2">
                   <td className="w-60">Aadhar no.:</td> <td>{contractInfo.Aadhar}</td>
                 </tr>
@@ -271,26 +341,55 @@ const User = () => {
 
             {/* Travel log */}
             <div className="mt-5">
-              <h1 className="ml-40 mt-7 text-6xl font-kelly">Travel Logs</h1>
-              <br />
-              <table className="p-5 pl-20 font-alg text-3xl w-5/6 ml-40 border-4 border-black">
-                {/* ... Table content ... */}
-                <tr className="h-16 p-2">
-                  <td className="border-2 p-5 border-black text-center">S.no</td>
-                  <td className="text-center border-2 p-5 border-black">
+      <h1 className="ml-40 mt-7 text-6xl font-kelly">Travel Logs</h1>
+      <br />
+      <form onSubmit={handleStatus}>
+        <table className="p-5 font-alg text-3xl w-5/6 ml-40 border-4 border-black">
+        <tr className="h-16 p-2">
+                  <td className="text-center border-2 w-56 p-5 border-black">
                     From(Place)
                   </td>
-                  <td className="border-2 p-5 text-center border-black">
+                  <td className="border-2 p-5 text-center w-56 border-black">
                     To(Place)
                   </td>
-                  <td className="border-2 text-center border-black">
-                    From(Time)
+                  <td className="border-2 text-center w-56 border-black">
+                    Submit
                   </td>
-                  <td className="border-2 p-5 text-center border-black">
-                    To(Time)
+                  <td className="border-2 p-5 text-center w-56 border-black">
+                    Status
                   </td>
-                </tr>
+                  <td className="border-2 p-5 border-black w-56 text-center">Note</td>
 
+        </tr>
+         
+         
+          <tr className="h-16 p-2">
+            <td className="text-center border-2 w-56 p-5 border-black">
+              <input
+                type="text"
+                value={fromPlace}
+                onChange={handleFromPlaceChange}
+                disabled={isSubmitted}
+              />
+            </td>
+            <td className="border-2 p-5 text-center w-56 border-black">
+              <input
+                type="text"
+                value={toPlace}
+                onChange={handleToPlaceChange}
+                disabled={isSubmitted}
+              />
+            </td>
+            <td className="border-2 text-center w-56 border-black">
+              <button type="submit">Submit</button>
+            </td>
+            <td className="border-2 p-5 text-center w-56 border-black">
+              {statusInfo.Status}
+            </td>
+            <td className="border-2 p-5 border-black w-56 text-center">
+            {statusInfo.Note}
+            </td>
+          </tr>
                 {/*  First Row */}
 
                 <tr className="h-16 p-2">
@@ -359,6 +458,7 @@ const User = () => {
                   <td className="border-2 text-center border-black"></td>
                 </tr>
               </table>
+              </form>
             </div>
 
             <br />
