@@ -32,12 +32,12 @@ const Visa_Login = () => {
   const handleSubmit = async (event) => {
     event.preventDefault();
     try {
-    setIsLoading(true);
+      setIsLoading(true);
 
-    const _uuid = form.current.elements.email.value;
-    const _password = form.current.elements.password.value;
+      const _uuid = form.current.elements.email.value;
+      const _password = form.current.elements.password.value;
 
-    
+
       console.log("Initiating Ether.js...");
       // Initialize ethers by connecting to the network
       const provider = new ethers.JsonRpcProvider(process.env.REACT_APP_RPC_URL);
@@ -57,7 +57,7 @@ const Visa_Login = () => {
       console.log("Visa Contract Initialized!!");
 
       console.log("Attempting to log in with password:", _password, "and email:", _uuid);
-      const loginSuccessful = await visa_Contract.login(_uuid,_password);
+      const loginSuccessful = await visa_Contract.login(_uuid, _password);
       console.log('Login result:', loginSuccessful);
 
       if (loginSuccessful) {
@@ -158,17 +158,28 @@ const Visa_Login = () => {
             <h1 className="font-kons text-8xl">LOGIN</h1>
             <img src="../images/Passport.png" alt="" className="h-96 mt-12" />
           </div>
+          <button type="submit" className="absolute  -mt-28">
+            <Link to="/">
+              <img
+                src="../images/sign-out.png"
+                alt="LOGO"
+                className="h-12 ml-[1100px]"
 
-          <div className="bg-pink-here pr-10 rounded-3xl border-4 border-blue-here">
+              />
+
+            </Link>
+          </button>
+
+          <div className="bg-pink-here pr-10 rounded-3xl h-[480px] border-4 border-blue-here">
             {errorMessage && (
               <div className="absolute rounded-2xl bg-background mt-1 ml-9 h-12 w-96 border-4 border-red-500 font-bold text-red-500 flex items-center justify-center">
                 {errorMessage}
               </div>
             )}
-            <form ref={form}  className="font-kelly ml-10 mt-24 space-y-2">
+            <form ref={form} className="font-kelly ml-10 mt-24 space-y-2">
               {/*Email */}
               <label htmlFor="email" className="text-3xl">
-                ID
+                Visa ID
               </label>{' '}
               <br />
               <input
@@ -222,7 +233,7 @@ const Visa_Login = () => {
               <button className="rounded w-96 hover:bg-background hover:text-white hover:w-40 hover:ml-28">
                 <Link to="/signup_visa">New user? Signup&gt;&gt;</Link>
               </button>
-              <br />
+
             </form>
           </div>
         </div>

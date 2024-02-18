@@ -3,6 +3,7 @@ import '../styles/style.css';
 import { ethers } from 'ethers';
 import USER_CONTRACT_ABI from './Contract/pass.json';
 import LoadingButton from "./utilites/LoadingButton";
+import { Link } from 'react-router-dom';
 
 const PassportDetailform = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -61,9 +62,9 @@ const PassportDetailform = () => {
 
     // Check if all required fields are filled
     const _password = document.querySelector('input[name="password"]').value;
-    
 
-    if (_password ) {
+
+    if (_password) {
       // All required fields are filled, proceed with form submission
       if (!isLoading) {
         handleSubmit(event);
@@ -118,9 +119,18 @@ const PassportDetailform = () => {
             className="h-14 mt-5 mx-8"
           />
         </div>
+        <button type="submit" className=" absolute ml-64">
+          <Link to="/user_login">
+            <img
+              src="../images/sign-out.png"
+              alt="LOGO"
+              className='h-12 mt-5 ml-[1200px]'
+            />
+          </Link>
+        </button>
         <h1 className="text-5xl pl-8 mt-64 font-kelly font-bold ml-[520px] absolute">Change Password</h1>
         <div className="bg-pink-here h-96 font-kelly w-4/5 rounded-3xl p-40 pl-80 ml-36 mt-32 pb-80 shadow-xl">
-          
+
           <label className="text-3xl">
             Enter your new Password:
           </label>
@@ -140,9 +150,9 @@ const PassportDetailform = () => {
             <a href="#!">SUBMIT</a>
           </button> */}
           <div className='ml-[100px]'>
-          <LoadingButton isLoading={isLoading} isSuccess={isSuccess} onClick={handleButtonClick} />
+            <LoadingButton isLoading={isLoading} isSuccess={isSuccess} onClick={handleButtonClick} />
           </div>
-          
+
           <br />
         </div>
       </body>

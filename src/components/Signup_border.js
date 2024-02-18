@@ -2,7 +2,7 @@ import React, { useContext, useRef, useState } from 'react';
 import '../styles/style.css';
 import { ethers } from 'ethers';
 import GOV_CONTRACT_ABI from './Contract/gov.json';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import LoadingButton from "./utilites/LoadingButton";
 import axios from 'axios';
 
@@ -15,15 +15,15 @@ const Signup_border = () => {
   const handleSubmit = async (event) => {
     event.preventDefault();
     try {
-    setIsLoading(true);
-    const formData = new FormData(form.current);
+      setIsLoading(true);
+      const formData = new FormData(form.current);
 
-    const _rname = formData.get('fullname');
-    // const _id = formData.get('address');
-    const _password = formData.get('password');
-    const _email = formData.get('email');
+      const _rname = formData.get('fullname');
+      // const _id = formData.get('address');
+      const _password = formData.get('password');
+      const _email = formData.get('email');
 
-    
+
       console.log('Initializing Ether.js...');
       const GOV_CONTRACT_ADDRESS = process.env.REACT_APP_CONTRACT_ADDRESS;
       const abi = GOV_CONTRACT_ABI.abi;
@@ -61,12 +61,12 @@ const Signup_border = () => {
       // setAnotherAddress(getBorderSubContract);
       // console.log('BorderSubcontract address:', getBorderSubContract);
 
-        // console.log('Sending request to backend...');
-        // const response = await axios.post('http://127.0.0.1:5000/get_border_authority', {
-        //   uuid: _id
-        // });
-        // console.log('Response from backend:', response.data);
-        // setAnotherAddress(response.data);
+      // console.log('Sending request to backend...');
+      // const response = await axios.post('http://127.0.0.1:5000/get_border_authority', {
+      //   uuid: _id
+      // });
+      // console.log('Response from backend:', response.data);
+      // setAnotherAddress(response.data);
 
       setIsLoading(false);
       setIsSuccess(true);
@@ -86,11 +86,11 @@ const Signup_border = () => {
     const _rname = form.current.elements.fullname.value;
     const _email = form.current.elements.email.value;
     // const _id = form.current.elements.address.value;
-    const _mobile = form.current.elements.aadhar.value;
+    // const _mobile = form.current.elements.aadhar.value;
     const _password = form.current.elements.password.value;
-    
 
-    if (_rname && _email && _mobile && _password ) {
+
+    if (_rname && _email && _password) {
       // All required fields are filled, proceed with form submission
       if (!isLoading) {
         handleSubmit(event);
@@ -144,7 +144,7 @@ const Signup_border = () => {
           </div>
 
           <div className="bg-pink-here max-w-7xl pl-10 pr-20 rounded-3xl border-4 border-blue-here">
-            <form ref={form} onSubmit={handleSubmit} className="font-kelly ml-10 mt-5 space-y-2">
+            <form ref={form} onSubmit={handleSubmit} className="font-kelly ml-10 mt-5 space-y-2 pt-8">
               {/* Full Name */}
               <label htmlFor="fullname" className="text-3xl mt-8">
                 Full Name
@@ -162,7 +162,7 @@ const Signup_border = () => {
 
               {/* Email */}
               <label htmlFor="email" className="text-3xl">
-                Email
+                Border ID
               </label>{' '}
               <br />
               <input
@@ -187,10 +187,10 @@ const Signup_border = () => {
                 required
                 className="h-10 w-96 px-5 focus:border-blue-here focus:border-4 hover:border-blue-here hover:border-4"
               />{' '} */}
-              
+
 
               {/* Mobile Number */}
-              <label htmlFor="aadhar" className="text-3xl mt-8">
+              {/* <label htmlFor="aadhar" className="text-3xl mt-8">
                 Mobile Number
               </label>
               <br />
@@ -202,7 +202,7 @@ const Signup_border = () => {
                 className="h-10 w-96 px-5 focus:border-blue-here focus:border-4 hover:border-blue-here hover:border-4"
               />{' '}
               <br />
-              <br />
+              <br /> */}
 
               {/* Password */}
               <label htmlFor="password" className="text-3xl">
@@ -226,6 +226,18 @@ const Signup_border = () => {
               <LoadingButton isLoading={isLoading} isSuccess={isSuccess} onClick={handleButtonClick} />
               <br />
               <br />
+
+              <button type="submit" className="h-12 absolute ml-56 text-xl ">
+                <Link className="hover:bg-background hover:bg-opacity-40 hover:text-white hover:px-2 hover:rounded" to="/border_login">
+                  Back to Login &gt;&gt;&gt;
+                  {/* <img
+                    src="../images/sign-out.png"
+                    alt="LOGO"
+                  /> */}
+
+                </Link>
+              </button>
+              <br /><br />
             </form>
           </div>
         </div>

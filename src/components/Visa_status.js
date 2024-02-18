@@ -3,6 +3,7 @@ import CustomErrorPage from './utilites/CustomErrorPage';
 import { ethers } from 'ethers';
 import GOV_CONTRACT_ABI from './Contract/gov.json';
 import Visa_CONTRACT_ABI from './Contract/visa.json';
+import { Link } from 'react-router-dom';
 
 const Visa_status = () => {
     const [_uuid, setUuid] = useState('');
@@ -156,10 +157,23 @@ const Visa_status = () => {
     // Render visa page
     return (
         <body className='bg-background h-auto p-8 pb-10'>
+
             <div className=" bg-background font-kelly">
+
                 <h2 className="text-8xl text-center mb-7">Status Page</h2>
                 {/* Form to set border status and notes */}
                 <div className="flex space-x-16 ml-32">
+                    <button type="submit" className="absolute  -mt-28">
+                        <Link to="/visa_login">
+                            <img
+                                src="../images/sign-out.png"
+                                alt="LOGO"
+                                className="h-12 ml-[1200px]"
+
+                            />
+
+                        </Link>
+                    </button>
                     <form
                         id="setStatusForm"
                         className="p-8 text-xl shadow-2xl rounded-3xl ml-20 bg-pink-here h-96 w-[600px]"

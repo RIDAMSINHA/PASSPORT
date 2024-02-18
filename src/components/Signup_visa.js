@@ -1,8 +1,9 @@
-import React, {  useRef, useState } from 'react';
+import React, { useRef, useState } from 'react';
 import '../styles/style.css';
 import { ethers } from 'ethers';
 import GOV_CONTRACT_ABI from './Contract/gov.json';
 import LoadingButton from "./utilites/LoadingButton";
+import { Link } from 'react-router-dom';
 
 const Signup_visa = () => {
   const form = useRef();
@@ -30,14 +31,14 @@ const Signup_visa = () => {
 
       console.log("id:", _id, "password:", _password);
       const govContract = new ethers.Contract(GOV_CONTRACT_ADDRESS, abi, signer);
-      const tx = await govContract.deployVisaContract(_id,_password);
+      const tx = await govContract.deployVisaContract(_id, _password);
       const receipt = await tx.wait();
       console.log('Subcontract VISA successfully deployed.', receipt);
 
       // Getting VISAcontract addr.
-      // const getVisaSubContract = await govContract.getVisa(_id);
-      // console.log('VISA contract address:', getVisaSubContract);
-      // localStorage.setItem('contractAddress', getVisaSubContract);
+      const getVisaSubContract = await govContract.getVisa(_id);
+      console.log('VISA contract address:', getVisaSubContract);
+      document.cookie = `v_Aad=${getVisaSubContract}; path=/CheckStatus; SameSite=None; Secure;`;
 
       setIsLoading(false);
       setIsSuccess(true);
@@ -56,12 +57,11 @@ const Signup_visa = () => {
 
     // Check if all required fields are filled
     const _rname = form.current.elements.fullname.value;
-    const _email = form.current.elements.email.value;
     const _id = form.current.elements.address.value;
     const _password = form.current.elements.password.value;
-    
 
-    if (_rname && _email && _id && _password ) {
+
+    if (_rname && _id && _password) {
       // All required fields are filled, proceed with form submission
       if (!isLoading) {
         handleSubmit(event);
@@ -117,6 +117,7 @@ const Signup_visa = () => {
           <div className="bg-pink-here max-w-7xl pl-10 pr-20 rounded-3xl border-4 border-blue-here">
             <form ref={form} onSubmit={handleSubmit} className="font-kelly ml-10 mt-5 space-y-2">
               {/* Full Name */}
+              <br />
               <label htmlFor="fullname" className="text-3xl mt-8">
                 Full Name
               </label>
@@ -132,7 +133,7 @@ const Signup_visa = () => {
               <br />
 
               {/* Email */}
-              <label htmlFor="email" className="text-3xl">
+              {/* <label htmlFor="email" className="text-3xl">
                 Email
               </label>{' '}
               <br />
@@ -144,11 +145,11 @@ const Signup_visa = () => {
                 className="font-normal h-10 w-96 px-5 focus:border-blue-here focus:border-4 hover:border-blue-here hover:border-4"
               />{' '}
               <br />
-              <br />
+              <br /> */}
 
               {/* VISA ID */}
               <label htmlFor="address" className="text-3xl mt-8">
-                ID
+                VISA ID
               </label>
               <br />
               <input
@@ -198,6 +199,17 @@ const Signup_visa = () => {
               <LoadingButton isLoading={isLoading} isSuccess={isSuccess} onClick={handleButtonClick} />
               <br />
               <br />
+
+              <button type="submit" className="h-12 absolute ml-56 text-xl ">
+                <Link className="hover:bg-background hover:bg-opacity-40 hover:text-white hover:px-2 hover:rounded" to="/visa_login">
+                  Back to Login &gt;&gt;&gt;
+                  {/* <img
+                    src="../images/sign-out.png"
+                    alt="LOGO"
+                  /> */}
+
+                </Link>
+              </button>
             </form>
           </div>
         </div>

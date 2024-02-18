@@ -21,12 +21,12 @@ const User = () => {
     Aadhar: "",
     Image: "../images/userimg.png",
   });
-    // State variables to hold the entered values
-    const [fromPlace, setFromPlace] = useState("");
-    const [toPlace, setToPlace] = useState("");
-    const [isSubmitted, setIsSubmitted] = useState(false);
+  // State variables to hold the entered values
+  const [fromPlace, setFromPlace] = useState("");
+  const [toPlace, setToPlace] = useState("");
+  const [isSubmitted, setIsSubmitted] = useState(false);
 
-    // Function to get the value of a cookie by its name
+  // Function to get the value of a cookie by its name
   const getCookie = (name) => {
     const cookieString = document.cookie;
     const cookies = cookieString.split(';');
@@ -39,17 +39,17 @@ const User = () => {
     return null;
   };
 
-  
-    // Event handlers to update the state with entered values
-    const handleFromPlaceChange = (e) => {
-      setFromPlace(e.target.value);
-      sessionStorage.setItem("fromPlace", e.target.value);
-    };
-  
-    const handleToPlaceChange = (e) => {
-      setToPlace(e.target.value);
-      sessionStorage.setItem("toPlace", e.target.value);
-    };
+
+  // Event handlers to update the state with entered values
+  const handleFromPlaceChange = (e) => {
+    setFromPlace(e.target.value);
+    sessionStorage.setItem("fromPlace", e.target.value);
+  };
+
+  const handleToPlaceChange = (e) => {
+    setToPlace(e.target.value);
+    sessionStorage.setItem("toPlace", e.target.value);
+  };
 
   const [imgUrl, setImgUrl] = useState(null);
   const [sessionIdExists, setSessionIdExists] = useState(false);
@@ -57,11 +57,11 @@ const User = () => {
   const handleChange = (event) => {
     const selectedValue = event.target.value;
     setSelectedOption(selectedValue);
-    if 
-    (
-      selectedValue === "https://indianvisaonline.gov.in/" || 
-      selectedValue === "/redirect"                        || 
-      selectedValue === "/change_password"                 || 
+    if
+      (
+      selectedValue === "https://indianvisaonline.gov.in/" ||
+      selectedValue === "/redirect" ||
+      selectedValue === "/CheckStatus" ||
       selectedValue === "/approve"
     ) {
       window.location.href = selectedValue;
@@ -84,18 +84,18 @@ const User = () => {
   const Status_Info = async () => {
 
     console.log("Status Info");
-  const statusesCookie = getCookie("statuses");
-  const notesCookie = getCookie("notes");
+    const statusesCookie = getCookie("statuses");
+    const notesCookie = getCookie("notes");
 
-  console.log("Statuses Cookie:", statusesCookie);
-  if (statusesCookie && notesCookie) {
-    setstatusInfo({
-      Status: statusesCookie,
-      Note: notesCookie
-    });
-  } else {
-    console.log("Statuses or notes cookie not found.");
-  }
+    console.log("Statuses Cookie:", statusesCookie);
+    if (statusesCookie && notesCookie) {
+      setstatusInfo({
+        Status: statusesCookie,
+        Note: notesCookie
+      });
+    } else {
+      console.log("Statuses or notes cookie not found.");
+    }
   };
 
   useEffect(() => {
@@ -255,7 +255,7 @@ const User = () => {
                       >
                         <option value="">Visa</option>
                         <option value="https://indianvisaonline.gov.in/">Apply For Visa</option>
-                        <option value="/redirect">Check Status</option>
+                        <option value="/CheckStatus">Check Status</option>
                       </select>
                     </td>
                   </tr>
@@ -266,7 +266,7 @@ const User = () => {
                   required
                 >
                   <a className="ml-10 mt-[6px]" href="https://indianvisaonline.gov.in/visa/instruction.html">
-                  Rules
+                    Rules
                   </a>
                 </li>
               </ul>
@@ -341,125 +341,125 @@ const User = () => {
 
             {/* Travel log */}
             <div className="mt-5">
-      <h1 className="ml-40 mt-7 text-6xl font-kelly">Travel Logs</h1>
-      <br />
-      <form onSubmit={handleStatus}>
-        <table className="p-5 font-alg text-3xl w-5/6 ml-40 border-4 border-black">
-        <tr className="h-16 p-2">
-                  <td className="text-center border-2 w-56 p-5 border-black">
-                    From(Place)
-                  </td>
-                  <td className="border-2 p-5 text-center w-56 border-black">
-                    To(Place)
-                  </td>
-                  <td className="border-2 text-center w-56 border-black">
-                    Submit
-                  </td>
-                  <td className="border-2 p-5 text-center w-56 border-black">
-                    Status
-                  </td>
-                  <td className="border-2 p-5 border-black w-56 text-center">Note</td>
+              <h1 className="ml-40 mt-7 text-6xl font-kelly">Travel Logs</h1>
+              <br />
+              <form onSubmit={handleStatus}>
+                <table className="p-5 font-alg text-3xl w-5/6 ml-40 border-4 border-black">
+                  <tr className="h-16 p-2">
+                    <td className="text-center border-2 w-56 p-5 border-black">
+                      From(Place)
+                    </td>
+                    <td className="border-2 p-5 text-center w-56 border-black">
+                      To(Place)
+                    </td>
+                    <td className="border-2 text-center w-56 border-black">
+                      Submit
+                    </td>
+                    <td className="border-2 p-5 text-center w-56 border-black">
+                      Status
+                    </td>
+                    <td className="border-2 p-5 border-black w-56 text-center">Note</td>
 
-        </tr>
-         
-         
-          <tr className="h-16 p-2">
-            <td className="text-center border-2 w-56 p-5 border-black">
-              <input
-                type="text"
-                value={fromPlace}
-                onChange={handleFromPlaceChange}
-                disabled={isSubmitted}
-                className="bg-transparent focus:outline-gray-200 text-center"
-              />
-            </td>
-            <td className="border-2 p-5 text-center w-56 border-black">
-              <input
-                type="text"
-                value={toPlace}
-                onChange={handleToPlaceChange}
-                disabled={isSubmitted}
-                className="bg-transparent focus:outline-gray-200 text-center"
-              />
-            </td>
-            <td className="border-2 text-center w-56 border-black">
-              <button type="submit" className="border-4 border-black text-5xl text-bold rounded-full w-14 h-14" >+</button>
-            </td>
-            <td className="border-2 p-5 text-center w-56 border-black">
-              {statusInfo.Status}
-            </td>
-            <td className="border-2 p-5 border-black w-56 text-center">
-            {statusInfo.Note}
-            </td>
-          </tr>
-                {/*  First Row */}
+                  </tr>
 
-                <tr className="h-16 p-2">
-                  <td className="border-2 p-5 text-center border-black"></td>
-                  <td className="border-2 text-center border-black"></td>
-                  <td className="border-2 text-center border-black"><button type="submit" className="border-4 border-black text-5xl text-bold rounded-full w-14 h-14" >+</button></td>
-                  <td className="border-2 text-center border-black"></td>
-                  <td className="border-2 text-center border-black"></td>
-                </tr>
 
-                {/* Second Row  */}
-                <tr className="h-16 p-2">
-                  <td className="border-2 text-center border-black p-5"></td>
-                  <td className="border-2 text-center border-black"></td>
-                  <td className="border-2 text-center border-black"><button type="submit" className="border-4 border-black text-5xl text-bold rounded-full w-14 h-14" >+</button></td>
-                  <td className="border-2 text-center border-black"></td>
-                  <td className="border-2 text-center border-black"></td>
-                </tr>
+                  <tr className="h-16 p-2">
+                    <td className="text-center border-2 w-56 p-5 border-black">
+                      <input
+                        type="text"
+                        value={fromPlace}
+                        onChange={handleFromPlaceChange}
+                        disabled={isSubmitted}
+                        className="bg-transparent focus:outline-gray-200 text-center"
+                      />
+                    </td>
+                    <td className="border-2 p-5 text-center w-56 border-black">
+                      <input
+                        type="text"
+                        value={toPlace}
+                        onChange={handleToPlaceChange}
+                        disabled={isSubmitted}
+                        className="bg-transparent focus:outline-gray-200 text-center"
+                      />
+                    </td>
+                    <td className="border-2 text-center w-56 border-black">
+                      <button type="submit" className="border-4 border-black text-5xl text-bold rounded-full w-14 h-14" >+</button>
+                    </td>
+                    <td className="border-2 p-5 text-center w-56 border-black">
+                      {statusInfo.Status}
+                    </td>
+                    <td className="border-2 p-5 border-black w-56 text-center">
+                      {statusInfo.Note}
+                    </td>
+                  </tr>
+                  {/*  First Row */}
 
-                {/* Third Row  */}
-                <tr className="h-16 p-2">
-                  <td className="border-2 text-center border-black p-5"></td>
-                  <td className="border-2 text-center border-black"></td>
-                  <td className="border-2 text-center border-black"><button type="submit" className="border-4 border-black text-5xl text-bold rounded-full w-14 h-14" >+</button></td>
-                  <td className="border-2 text-center border-black"></td>
-                  <td className="border-2 text-center border-black"></td>
-                </tr>
+                  <tr className="h-16 p-2">
+                    <td className="border-2 p-5 text-center border-black"></td>
+                    <td className="border-2 text-center border-black"></td>
+                    <td className="border-2 text-center border-black"><button type="submit" className="border-4 border-black text-5xl text-bold rounded-full w-14 h-14" >+</button></td>
+                    <td className="border-2 text-center border-black"></td>
+                    <td className="border-2 text-center border-black"></td>
+                  </tr>
 
-                {/* Forth Row */}
+                  {/* Second Row  */}
+                  <tr className="h-16 p-2">
+                    <td className="border-2 text-center border-black p-5"></td>
+                    <td className="border-2 text-center border-black"></td>
+                    <td className="border-2 text-center border-black"><button type="submit" className="border-4 border-black text-5xl text-bold rounded-full w-14 h-14" >+</button></td>
+                    <td className="border-2 text-center border-black"></td>
+                    <td className="border-2 text-center border-black"></td>
+                  </tr>
 
-                <tr className="h-16 p-2">
-                  <td className="border-2 text-center border-black p-5"></td>
-                  <td className="border-2 text-center border-black"></td>
-                  <td className="border-2 text-center border-black"><button type="submit" className="border-4 border-black text-5xl text-bold rounded-full w-14 h-14" >+</button></td>
-                  <td className="border-2 text-center border-black"></td>
-                  <td className="border-2 text-center border-black"></td>
-                </tr>
+                  {/* Third Row  */}
+                  <tr className="h-16 p-2">
+                    <td className="border-2 text-center border-black p-5"></td>
+                    <td className="border-2 text-center border-black"></td>
+                    <td className="border-2 text-center border-black"><button type="submit" className="border-4 border-black text-5xl text-bold rounded-full w-14 h-14" >+</button></td>
+                    <td className="border-2 text-center border-black"></td>
+                    <td className="border-2 text-center border-black"></td>
+                  </tr>
 
-                {/* Fifth Row */}
+                  {/* Forth Row */}
 
-                <tr className="h-16 p-2">
-                  <td className="border-2 text-center border-black p-5"></td>
-                  <td className="border-2 text-center border-black"></td>
-                  <td className="border-2 text-center border-black"><button type="submit" className="border-4 border-black text-5xl text-bold rounded-full w-14 h-14" >+</button></td>
-                  <td className="border-2 text-center border-black"></td>
-                  <td className="border-2 text-center border-black"></td>
-                </tr>
+                  <tr className="h-16 p-2">
+                    <td className="border-2 text-center border-black p-5"></td>
+                    <td className="border-2 text-center border-black"></td>
+                    <td className="border-2 text-center border-black"><button type="submit" className="border-4 border-black text-5xl text-bold rounded-full w-14 h-14" >+</button></td>
+                    <td className="border-2 text-center border-black"></td>
+                    <td className="border-2 text-center border-black"></td>
+                  </tr>
 
-                {/* Sixth Row */}
+                  {/* Fifth Row */}
 
-                <tr className="h-16 p-2">
-                  <td className="border-2 text-center border-black p-5"></td>
-                  <td className="border-2 text-center border-black"></td>
-                  <td className="border-2 text-center border-black"><button type="submit" className="border-4 border-black text-5xl text-bold rounded-full w-14 h-14" >+</button></td>
-                  <td className="border-2 text-center border-black"></td>
-                  <td className="border-2 text-center border-black"></td>
-                </tr>
+                  <tr className="h-16 p-2">
+                    <td className="border-2 text-center border-black p-5"></td>
+                    <td className="border-2 text-center border-black"></td>
+                    <td className="border-2 text-center border-black"><button type="submit" className="border-4 border-black text-5xl text-bold rounded-full w-14 h-14" >+</button></td>
+                    <td className="border-2 text-center border-black"></td>
+                    <td className="border-2 text-center border-black"></td>
+                  </tr>
 
-                {/* Seventh Row  */}
+                  {/* Sixth Row */}
 
-                <tr className="h-16 p-2">
-                  <td className="border-2 text-center border-black p-5"></td>
-                  <td className="border-2 text-center border-black"></td>
-                  <td className="border-2 text-center border-black"><button type="submit" className="border-4 border-black text-5xl text-bold rounded-full w-14 h-14" >+</button></td>
-                  <td className="border-2 text-center border-black"></td>
-                  <td className="border-2 text-center border-black"></td>
-                </tr>
-              </table>
+                  <tr className="h-16 p-2">
+                    <td className="border-2 text-center border-black p-5"></td>
+                    <td className="border-2 text-center border-black"></td>
+                    <td className="border-2 text-center border-black"><button type="submit" className="border-4 border-black text-5xl text-bold rounded-full w-14 h-14" >+</button></td>
+                    <td className="border-2 text-center border-black"></td>
+                    <td className="border-2 text-center border-black"></td>
+                  </tr>
+
+                  {/* Seventh Row  */}
+
+                  <tr className="h-16 p-2">
+                    <td className="border-2 text-center border-black p-5"></td>
+                    <td className="border-2 text-center border-black"></td>
+                    <td className="border-2 text-center border-black"><button type="submit" className="border-4 border-black text-5xl text-bold rounded-full w-14 h-14" >+</button></td>
+                    <td className="border-2 text-center border-black"></td>
+                    <td className="border-2 text-center border-black"></td>
+                  </tr>
+                </table>
               </form>
             </div>
 
