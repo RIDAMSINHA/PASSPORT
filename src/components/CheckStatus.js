@@ -123,11 +123,11 @@ const CheckStatus = () => {
           <br />
           <div className='text-3xl space-x-28 mt-12  ml-32 flex'>
             <div>
-              <input type="radio" id="Approved" name="status" value="Approved" checked={visaStatus === "Approved" || visaStatus === true} disabled />
+              <input type="radio" id="Approved" name="status" value="Approved" checked={visaStatus === "Approved" || visaStatus === true} disabled className="appearance-none border border-gray-400 rounded-full w-6 h-6 checked:bg-blue-500 checked:border-transparent"/>
               <label htmlFor="Approved">Approved</label>
             </div>
             <div>
-              <input type="radio" id="Revoked" name="status" value="Revoked" checked={visaStatus === "Revoked" || visaStatus === false} disabled />
+              <input type="radio" id="Revoked" name="status" value="Revoked" checked={visaStatus === "Revoked" || visaStatus === false} disabled className="appearance-none border border-gray-400 rounded-full w-6 h-6 checked:bg-blue-500 checked:border-transparent"/>
               <label htmlFor="Revoked">Revoked</label>
             </div>
           </div>
