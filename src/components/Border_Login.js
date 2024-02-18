@@ -169,7 +169,7 @@ const Border_Login = () => {
             </Link>
           </button>
 
-          <div className="bg-pink-here pr-10 rounded-3xl border-4 h-[50px] border-blue-here">
+          <div className="bg-pink-here pr-10 rounded-3xl border-4 h-[480px] border-blue-here">
             {errorMessage && (
               <div className="absolute rounded-2xl bg-background mt-1 ml-9 h-12 w-96 border-4 border-red-500 font-bold text-red-500 flex items-center justify-center">
                 {errorMessage}

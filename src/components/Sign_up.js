@@ -61,18 +61,19 @@ const Sign_up = () => {
       console.log('Ether.js initialized successfully');
 
       // Access form ref directly
-      // emailjs
-      //   .sendForm(
-      //     "service_innq1uf",
-      //     "template_s6bqlrp",
-      //     form.current,
-      //     "bDImEd5GCR6oT0hzq"
-      //   )
-      //   .then(
-      //     async (result) => {
-      //       console.log(result.text);
-      //       console.log("Message has been sent");
-      //       console.log("YOUR USERNAME IS: ", _username);
+      emailjs
+        .sendForm(
+          "service_innq1uf",
+          "template_s6bqlrp",
+          form.current,
+          "bDImEd5GCR6oT0hzq"
+        )
+        .then(
+          async (result) => {
+            console.log(result.text);
+            alert("YOUR USERNAME HAS BEEN SENT TO YOUR EMAIL ADDRESS.");
+            console.log("YOUR USERNAME IS: ", _username);
+          });
 
       // Getting Form values:
       const _rname = formData.get('fullname');
@@ -93,6 +94,7 @@ const Sign_up = () => {
         // setSubContractAddress(getSubContract);
         // console.log('Subcontract address:', getSubContract);
         document.cookie = `Sub_add=${getSubContract}; path=/details`;
+        sessionStorage.setItem('Sub_add', getSubContract);
 
         setIsLoading(false);
         setIsSuccess(true);
