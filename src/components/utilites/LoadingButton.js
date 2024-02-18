@@ -17,12 +17,12 @@ const LoadingButton = ({ isLoading, isSuccess, onClick }) => {
     }
 
     return (
-        <button 
-        type="submit" 
-        className={`rounded-2xl bg-background h-12 w-96 border-4 border-blue-here hover:border-background 
+        <button
+            type="submit"
+            className={`rounded-2xl bg-background h-12 w-96 border-4 border-blue-here hover:border-background 
         hover:bg-opacity-40 hover:text-black ${isLoading ? 'relative' : ''}`}
-        onClick={onClick}
-        disabled={isLoading}
+            onClick={onClick}
+            disabled={isLoading}
         >
             {isLoading && (
                 <svg aria-hidden="true" role="status" className={`absolute left-0 right-0 mx-auto w-7 h-8 -mt-1 animate-spin `} viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">

@@ -30,7 +30,7 @@ const User_Details = () => {
   useEffect(() => {
     const init = async () => {
       const provider = new ethers.JsonRpcProvider(process.env.REACT_APP_RPC_URL);
-      const wallet = new ethers.Wallet(process.env.REACT_APP_PRIVATE_KEY,provider);
+      const wallet = new ethers.Wallet(process.env.REACT_APP_PRIVATE_KEY, provider);
       const contractAddress = process.env.REACT_APP_DETAIL_CONTRACT_ADDRESS;
       const contractAbi = DETAIL_CONTRACT_ABI.abi;
 
@@ -131,7 +131,7 @@ const User_Details = () => {
     event.preventDefault();
 
     // Check if all required fields are filled
-    
+
     const userName = form.current.elements.userName.value;
     const userAge = form.current.elements.userAge.value;
     const userDateOfBirth = form.current.elements.userDateOfBirth.value;
@@ -142,7 +142,7 @@ const User_Details = () => {
     // const Email = form.current.elements.Email.value;
     const Aadhar = form.current.elements.Aadhar.value;
 
-    if ( userName && userAge && userDateOfBirth && userFatherName && userGender && userNationality && userAddress && Aadhar) {
+    if (userName && userAge && userDateOfBirth && userFatherName && userGender && userNationality && userAddress && Aadhar) {
       // All required fields are filled, proceed with form submission
       if (!isLoading) {
         sendFileToIPFS(event);
@@ -405,12 +405,12 @@ const User_Details = () => {
             >
               <Link to="/sign_up">Submit&gt;&gt;&gt;</Link>
             </button> */}
-            <LoadingButton isLoading={isLoading} isSuccess={isSuccess} onClick={handleButtonClick} />
-            <br/><br/>
+                <LoadingButton isLoading={isLoading} isSuccess={isSuccess} onClick={handleButtonClick} />
+                <br /><br />
               </table>
-              
+
             </div>
-            
+
           </form>
 
           {/* <hr className="border-b-2 border-black" /> */}

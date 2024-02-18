@@ -21,13 +21,13 @@ const Border_Login = () => {
   const handleSubmit = async (event) => {
     event.preventDefault();
     try {
-    setIsLoading(true);
+      setIsLoading(true);
 
-    const _uuid = form.current.elements.email.value;
-    const _password = form.current.elements.password.value;
-    // const _id = form.current.elements.username.value;
+      const _uuid = form.current.elements.email.value;
+      const _password = form.current.elements.password.value;
+      // const _id = form.current.elements.username.value;
 
-    
+
       // console.log("Initiating Ether.js...");
       // // Initialize ethers by connecting to the network
       // const provider = new ethers.JsonRpcProvider(process.env.REACT_APP_RPC_URL);
@@ -157,8 +157,19 @@ const Border_Login = () => {
             <h1 className="font-kons text-8xl">LOGIN</h1>
             <img src="../images/Passport.png" alt="" className="h-96 mt-12" />
           </div>
+          <button type="submit" className="absolute  -mt-28">
+            <Link to="/">
+              <img
+                src="../images/sign-out.png"
+                alt="LOGO"
+                className="h-12 ml-[1100px]"
 
-          <div className="bg-pink-here pr-10 rounded-3xl border-4 border-blue-here">
+              />
+
+            </Link>
+          </button>
+
+          <div className="bg-pink-here pr-10 rounded-3xl border-4 h-[50px] border-blue-here">
             {errorMessage && (
               <div className="absolute rounded-2xl bg-background mt-1 ml-9 h-12 w-96 border-4 border-red-500 font-bold text-red-500 flex items-center justify-center">
                 {errorMessage}
@@ -177,7 +188,7 @@ const Border_Login = () => {
                 required
                 className="font-normal h-10 w-96 px-5 focus:border-blue-here focus:border-4 hover:border-blue-here hover:border-4"
               />{' '}
-              
+
               {/* User Name */}
               {/* <label htmlFor="username" className="text-3xl mt-8">
                 Border ID

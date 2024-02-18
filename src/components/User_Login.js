@@ -1,5 +1,5 @@
 import React, { useContext, useRef, useState } from "react";
-import "../styles/style.css"; 
+import "../styles/style.css";
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import { ethers } from "ethers";
@@ -22,27 +22,27 @@ const Login = () => {
   const handleSubmit = async (event) => {
     event.preventDefault();
     try {
-    setIsLoading(true);
+      setIsLoading(true);
 
-    const _uuid = form.current.elements.email.value;
-    const _password = form.current.elements.password.value;
-    const _username = form.current.elements.username.value;
+      const _uuid = form.current.elements.email.value;
+      const _password = form.current.elements.password.value;
+      const _username = form.current.elements.username.value;
 
-    // Initialize ethers by connecting to the network
-    const provider = new ethers.JsonRpcProvider(process.env.REACT_APP_RPC_URL);
-    const privateKey = process.env.REACT_APP_PRIVATE_KEY;
-    const wallet = new ethers.Wallet(privateKey);
-    const signer = wallet.connect(provider);
+      // Initialize ethers by connecting to the network
+      const provider = new ethers.JsonRpcProvider(process.env.REACT_APP_RPC_URL);
+      const privateKey = process.env.REACT_APP_PRIVATE_KEY;
+      const wallet = new ethers.Wallet(privateKey);
+      const signer = wallet.connect(provider);
 
-    const Gov_contractAddress = process.env.REACT_APP_CONTRACT_ADDRESS;
-    const gov_abi = GOV_CONTRACT_ABI.abi;
-    const Gov_Contract = new ethers.Contract(Gov_contractAddress, gov_abi, signer);
-    const USER_CONTRACT_ADDRESS = await Gov_Contract.getSubContractDetails(_uuid);
+      const Gov_contractAddress = process.env.REACT_APP_CONTRACT_ADDRESS;
+      const gov_abi = GOV_CONTRACT_ABI.abi;
+      const Gov_Contract = new ethers.Contract(Gov_contractAddress, gov_abi, signer);
+      const USER_CONTRACT_ADDRESS = await Gov_Contract.getSubContractDetails(_uuid);
 
-    const user_abi = USER_CONTRACT_ABI.abi;
-    const userContract = new ethers.Contract(USER_CONTRACT_ADDRESS,user_abi,signer);
+      const user_abi = USER_CONTRACT_ABI.abi;
+      const userContract = new ethers.Contract(USER_CONTRACT_ADDRESS, user_abi, signer);
 
-    
+
       console.log("Attempting to log in with password:", _password, "username:", _username, "and pcd:", _uuid);
 
       const loginSuccessful = await userContract.login(_password, _uuid, _username);
@@ -142,6 +142,17 @@ const Login = () => {
             <h1 className="font-kons text-8xl">LOGIN</h1>
             <img src="../images/Passport.png" alt="" className="h-96 mt-12" />
           </div>
+          <button type="submit" className="absolute  -mt-28">
+            <Link to="/">
+              <img
+                src="../images/sign-out.png"
+                alt="LOGO"
+                className="h-12 ml-[1100px]"
+
+              />
+
+            </Link>
+          </button>
 
           <div className="bg-pink-here rounded-3xl border-4 border-blue-here pr-10">
             {errorMessage && (

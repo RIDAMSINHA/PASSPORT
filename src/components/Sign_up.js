@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useRef, useState } from "react";
 import { ethers } from 'ethers';
 import emailjs from "@emailjs/browser";
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import LoadingButton from "./utilites/LoadingButton";
 import GOV_CONTRACT_ABI from './Contract/gov.json';
 import { SubContractContext } from './utilites/SubContractContext';
@@ -39,9 +39,9 @@ const Sign_up = () => {
   const handleSubmit = async (event) => {
     event.preventDefault();
     try {
-    setIsLoading(true);
+      setIsLoading(true);
 
-    
+
       console.log('Initializing Ether.js...');
 
       const formData = new FormData(form.current);
@@ -75,13 +75,11 @@ const Sign_up = () => {
       //       console.log("YOUR USERNAME IS: ", _username);
 
       // Getting Form values:
-      const _aadhar = formData.get('aadhar');
       const _rname = formData.get('fullname');
-      const _pcd = formData.get('address');
       const _password = formData.get('password');
       const _uuid = formData.get('email');
 
-      console.log('Form values:', _aadhar, _rname, _password, _uuid, _username);
+      console.log('Form values:', _rname, _password, _uuid, _username);
 
       try {
         // Call deploySubContract function on the existing Gov_contract
@@ -95,7 +93,7 @@ const Sign_up = () => {
         // setSubContractAddress(getSubContract);
         // console.log('Subcontract address:', getSubContract);
         document.cookie = `Sub_add=${getSubContract}; path=/details`;
-        
+
         setIsLoading(false);
         setIsSuccess(true);
         setTimeout(() => {
@@ -117,11 +115,9 @@ const Sign_up = () => {
     // Check if all required fields are filled
     const fullName = form.current.elements.fullname.value;
     const email = form.current.elements.email.value;
-    const address = form.current.elements.address.value;
-    const aadhar = form.current.elements.aadhar.value;
     const password = form.current.elements.password.value;
 
-    if (fullName && email && address && aadhar && password) {
+    if (fullName && email && password) {
       // All required fields are filled, proceed with form submission
       if (!isLoading) {
         handleSubmit(event);
@@ -176,7 +172,7 @@ const Sign_up = () => {
           </div>
 
           <div className="bg-pink-here max-w-7xl pl-10 pr-20 rounded-3xl border-4 border-blue-here">
-            <form ref={form} onSubmit={handleSubmit} className="font-kelly ml-10 mt-5 space-y-2">
+            <form ref={form} onSubmit={handleSubmit} className="font-kelly pt-8 ml-10 mt-5 space-y-2">
               {/* Full Name */}
               <label htmlFor="fullname" className="text-3xl mt-8">
                 Full Name
@@ -208,7 +204,7 @@ const Sign_up = () => {
               <br />
 
               {/* Address */}
-              <label htmlFor="address" className="text-3xl mt-8">
+              {/* <label htmlFor="address" className="text-3xl mt-8">
                 Address
               </label>
               <br />
@@ -220,10 +216,10 @@ const Sign_up = () => {
                 className="h-10 w-96 px-5 focus:border-blue-here focus:border-4 hover:border-blue-here hover:border-4"
               />{' '}
               <br />
-              <br />
+              <br /> */}
 
               {/* Aadhar Number */}
-              <label htmlFor="aadhar" className="text-3xl mt-8">
+              {/* <label htmlFor="aadhar" className="text-3xl mt-8">
                 Aadhar Card Number
               </label>
               <br />
@@ -235,7 +231,7 @@ const Sign_up = () => {
                 className="h-10 w-96 px-5 focus:border-blue-here focus:border-4 hover:border-blue-here hover:border-4"
               />{' '}
               <br />
-              <br />
+              <br /> */}
 
               {/* Password */}
               <label htmlFor="password" className="text-3xl">
@@ -267,7 +263,17 @@ const Sign_up = () => {
               </button> */}
               <LoadingButton isLoading={isLoading} isSuccess={isSuccess} onClick={handleButtonClick} />
               <br />
-              <br />
+
+              <button type="submit" className="h-12 absolute ml-56 text-xl ">
+                <Link className="hover:bg-background hover:bg-opacity-40 hover:text-white hover:px-2 hover:rounded" to="/user_login">
+                  Back to Login &gt;&gt;&gt;
+                  {/* <img
+                    src="../images/sign-out.png"
+                    alt="LOGO"
+                  /> */}
+
+                </Link>
+              </button>
             </form>
           </div>
         </div>
