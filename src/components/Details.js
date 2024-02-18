@@ -44,19 +44,19 @@ const User_Details = () => {
     init();
   }, []);
 
-  const getCookie = (name) => {
-    const cookieString = document.cookie;
-    const cookies = cookieString.split(';');
-    for (let cookie of cookies) {
-      const [cookieName, cookieValue] = cookie.split('=');
-      if (cookieName === name) {
-        return cookieValue;
-      }
-    }
-    return null;
-  };
+  // const getCookie = (name) => {
+  //   const cookieString = document.cookie;
+  //   const cookies = cookieString.split(';');
+  //   for (let cookie of cookies) {
+  //     const [cookieName, cookieValue] = cookie.split('=');
+  //     if (cookieName === name) {
+  //       return cookieValue.trim();
+  //     }
+  //   }
+  //   return null;
+  // };
 
-  const USER_CONTRACT_ADDRESS = getCookie("Sub_add");
+  const USER_CONTRACT_ADDRESS = sessionStorage.getItem("Sub_add");
   console.log(USER_CONTRACT_ADDRESS);
 
   const sendFileToIPFS = async (e) => {
@@ -198,7 +198,7 @@ const User_Details = () => {
           {/* User information */}
 
           <form ref={form} onSubmit={sendFileToIPFS}>
-            <div className="flex ml-56 pl-20 pt-8 pb-8 space-x-20">
+            <div className="flex ml-56 pl-28 pt-8 pb-8 space-x-20">
               {/* ... User image ... */}
               <div>
                 <img
@@ -215,12 +215,12 @@ const User_Details = () => {
                   type="file"
                   onChange={(e) => setFileImg(e.target.files[0])}
                   required
-                  className="mt-2 px-2"
+                  className="mt-28 px-2 pl-0"
                 />
               </div>
               {/* ... User details ... */}
-              <table className="bg-pink-here rounded-3xl w-1/2 pl-10 pt-10 pb-10 bg-opacity-50 shadow-xl text-xl font-kelly">
-                <tr className="flex p-2 pl-8 pt-4">
+              <table className="bg-pink-here rounded-3xl w-1/2 pl-16 pt-16 pb-10 bg-opacity-50 shadow-xl text-xl font-kelly ">
+                <tr className="flex p-2 pl-12 pt-8">
                   <td className="w-60">Name:</td>{" "}
                   <td>
                     <input
@@ -234,7 +234,7 @@ const User_Details = () => {
                     />
                   </td>
                 </tr>
-                <tr className="flex pl-8 p-2">
+                <tr className="flex pl-12 p-2">
                   <td className="w-60"> Age:</td>
                   <td>
                     <input
@@ -248,21 +248,21 @@ const User_Details = () => {
                     />
                   </td>
                 </tr>
-                <tr className="flex pl-8 p-2">
+                <tr className="flex pl-12 p-2">
                   <td className="w-60">Date of Birth:</td>{" "}
                   <td>
                     <input
-                      type="text"
+                      type="date"
                       name="userDateOfBirth"
                       value={contractInfo.userDateOfBirth}
                       onChange={handleInputChange}
-                      className="  border-2 border-blue-here bg-white-here font-alg pl-5"
+                      className="  border-2 border-blue-here bg-white-here font-alg pl-5 w-[235px]"
                       placeholder="dd-mm-yyyy"
                       required
                     />
                   </td>
                 </tr>
-                <tr className="flex pl-8 p-2">
+                <tr className="flex pl-12 p-2">
                   <td className="w-60">Father's Name:</td>{" "}
                   <td>
                     <input
@@ -276,7 +276,7 @@ const User_Details = () => {
                     />
                   </td>
                 </tr>
-                <tr className="flex pl-8 p-2">
+                <tr className="flex pl-12 p-2">
                   <td className="w-60">Gender:</td>{" "}
                   <td>
                     <input
@@ -290,7 +290,7 @@ const User_Details = () => {
                     />
                   </td>
                 </tr>
-                <tr className="flex pl-8 p-2">
+                <tr className="flex pl-12 p-2">
                   <td className="w-60"> Nationality:</td>
                   <td>
                     <input
@@ -304,7 +304,7 @@ const User_Details = () => {
                     />
                   </td>
                 </tr>
-                <tr className="flex pl-8 p-2">
+                <tr className="flex pl-12 p-2">
                   <td className="w-60">Address:</td>{" "}
                   <td>
                     <input
@@ -318,7 +318,7 @@ const User_Details = () => {
                     />
                   </td>
                 </tr>
-                <tr className="flex pl-8 p-2">
+                <tr className="flex pl-12 p-2">
                   <td className="w-60">Pincode:</td>{" "}
                   <td>
                     <input
@@ -346,7 +346,7 @@ const User_Details = () => {
                     />
                   </td>
                 </tr> */}
-                <tr className="flex pl-8 p-2">
+                <tr className="flex pl-12 p-2">
                   <td className="w-60">Aadhar no.:</td>{" "}
                   <td>
                     <input
@@ -405,7 +405,9 @@ const User_Details = () => {
             >
               <Link to="/sign_up">Submit&gt;&gt;&gt;</Link>
             </button> */}
+            <div className="mt-2 ml-[100px]">
                 <LoadingButton isLoading={isLoading} isSuccess={isSuccess} onClick={handleButtonClick} />
+                </div>
                 <br /><br />
               </table>
 
