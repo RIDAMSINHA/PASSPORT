@@ -100,7 +100,7 @@ const PassportLogin = () => {
               {/* user login */}
 
               <div className="ml-14 bg-gray-100 p-6 rounded-lg h-80 shadow-lg w-64">
-                <img src="../images/Passport.png" alt="LOGO" id="hello" className="h-14 mt-5 mr-20" />
+                <img src="https://static.vecteezy.com/system/resources/previews/019/879/186/original/user-icon-on-transparent-background-free-png.png" alt="LOGO" id="hello" className="h-14 mt-5 ml-[20px]" />
                 <h2 className="mt-4 text-center text-lg font-semibold text-gray-900">User</h2>
                 <p className="mt-2 text-sm text-gray-600 text-center">
                   Login with your User ID , Username and Password to access your Passport Services and Account.
@@ -114,7 +114,7 @@ const PassportLogin = () => {
 
               {/* Government Login */}
               <div className="bg-gray-100 h-80 p-6 rounded-lg shadow-lg w-64">
-                <img src="../images/Passport.png" alt="LOGO" id="hello" className="h-14 mt-5 mr-8" />
+                <img src="https://seeklogo.com/images/I/indian-government-logo-1C3F1925AA-seeklogo.com.png" alt="LOGO" id="hello" className="h-14 mt-5 mr-8 ml-[58px]" />
                 <h2 className="mt-4 text-center text-lg font-semibold text-gray-900">Government</h2>
                 <p className="mt-2 text-sm text-gray-600 text-center">
                 Login with your Government ID and Password to access your Government Services and <br/>Account.
@@ -128,7 +128,7 @@ const PassportLogin = () => {
 
               {/* Visa Authority */}
               <div className="bg-gray-100 h-80 p-6 rounded-lg shadow-lg w-64">
-                <img src="../images/Passport.png" alt="LOGO" id="hello" className="h-14 mt-5 mr-8" />
+                <img src="https://static.thenounproject.com/png/469-200.png" alt="LOGO" id="hello" className="h-14 mt-5 mr-[74px]" />
                 <h2 className="mt-4 text-center text-lg font-semibold text-gray-900">Visa Authority</h2>
                 <p className="mt-2 text-sm text-gray-600 text-center">
                 Login with your Visa Authority ID and Password to access your Visa Services and <br/>Account.
@@ -142,7 +142,7 @@ const PassportLogin = () => {
 
               {/* Border Authority */}
               <div className="bg-gray-100 h-80 p-6 rounded-lg shadow-lg w-64">
-                <img id="hello" src="../images/Passport.png" alt="LOGO" className="h-14 mt-5 mx-8" />
+                <img id="hello" src="https://cdn2.iconfinder.com/data/icons/travel-178/100/Immigration-03-512.png" alt="LOGO" className="h-14 mt-5 mx-8" />
                 <h2 className="mt-4 text-center text-lg font-semibold text-gray-900">Border Authority</h2>
                 <p className="mt-2 text-sm text-gray-600 text-center">
                 Login with your Border Authority ID and Password to access your Border Services and <br/>Account.

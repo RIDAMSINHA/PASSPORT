@@ -164,21 +164,20 @@ const Border_Login = () => {
                 {errorMessage}
               </div>
             )}
-            <form ref={form} onSubmit={handleSubmit} className="font-kelly ml-10 mt-10 space-y-2">
+            <form ref={form} onSubmit={handleSubmit} className="font-kelly ml-10 mt-24 space-y-2">
               {/*Email */}
               <label htmlFor="email" className="text-3xl">
-                Email
+                Border ID
               </label>{' '}
               <br />
               <input
                 name='email'
                 type="text"
-                placeholder="Email"
+                placeholder="Border ID"
                 required
                 className="font-normal h-10 w-96 px-5 focus:border-blue-here focus:border-4 hover:border-blue-here hover:border-4"
               />{' '}
-              <br />
-              <br />
+              
               {/* User Name */}
               {/* <label htmlFor="username" className="text-3xl mt-8">
                 Border ID

@@ -139,7 +139,10 @@ const PassportDetailform = () => {
           {/* <button className="rounded-2xl bg-background h-16 w-3/4 border-4 hover:border-blue-here hover:bg-opacity-80 text-2xl border-background bg-opacity-40 hover:text-black">
             <a href="#!">SUBMIT</a>
           </button> */}
+          <div className='ml-[100px]'>
           <LoadingButton isLoading={isLoading} isSuccess={isSuccess} onClick={handleButtonClick} />
+          </div>
+          
           <br />
         </div>
       </body>
